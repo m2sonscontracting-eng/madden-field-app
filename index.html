@@ -1,317 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Madden Homes Field App</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0F0F0D;font-family:Georgia,serif}
-    input,textarea,button{font-family:Georgia,serif}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrewDay — The simple field app for small contractor crews</title>
+<meta name="description" content="Know who's on site, what's getting done, and what materials your crew needs — without the 7am phone calls. Built by a contractor, for contractors. Flat $29/mo, unlimited crew."/>
+<meta name="theme-color" content="#0F0F0D"/>
+<style>
+:root{--gold:#C8973A;--gold2:#E8B84B;--bg:#0F0F0D;--surface:#161614;--card:#1C1C19;--border:#2A2A25;--text:#F0EBE0;--muted:#A3A39A;--dim:#6E6E66;--green:#4CAF7A;--red:#E05A3A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;height:66px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);text-decoration:none}
+.logo span{width:34px;height:34px;background:var(--gold);color:#111;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.btn{display:inline-block;background:var(--gold);color:#111;font-weight:800;text-decoration:none;padding:13px 24px;border-radius:9px;border:none;cursor:pointer;font-size:16px}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn.sm{padding:9px 16px;font-size:14px}
+.hero{padding:70px 0 50px;text-align:center}
+.eyebrow{color:var(--gold);font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.08;margin:16px auto 18px;max-width:820px;letter-spacing:-1px}
+h1 em{font-style:normal;color:var(--gold2)}
+.lead{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:640px;margin:0 auto 30px}
+.ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.fine{color:var(--dim);font-size:13px;margin-top:14px}
+section{padding:60px 0;border-top:1px solid var(--border)}
+h2{font-size:clamp(26px,4vw,38px);line-height:1.15;margin-bottom:12px;letter-spacing:-.5px}
+.center{text-align:center}.sub{color:var(--muted);max-width:620px;margin:0 auto 36px}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+.card h3{font-size:18px;margin:10px 0 6px}
+.card p{color:var(--muted);font-size:15px}
+.icon{font-size:28px}
+.pain li{list-style:none;padding:10px 0;border-bottom:1px solid var(--border);color:var(--muted)}
+.pain li:last-child{border:none}
+.pain li b{color:var(--text)}
+.price{font-size:46px;font-weight:800}
+.price small{font-size:16px;color:var(--muted);font-weight:500}
+.plan ul{list-style:none;margin:18px 0 24px}
+.plan li{padding:6px 0;color:var(--muted)}
+.plan li::before{content:"✓  ";color:var(--green);font-weight:800}
+.plan.pro{border:2px solid var(--gold);position:relative}
+.tag{position:absolute;top:-12px;left:24px;background:var(--gold);color:#111;font-size:11px;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:20px}
+details{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700}
+details p{color:var(--muted);margin-top:10px}
+.phone{max-width:340px;margin:40px auto 0;background:var(--card);border:1px solid var(--border);border-radius:26px;padding:16px;text-align:left;box-shadow:0 30px 80px rgba(200,151,58,.12)}
+.phone .bar{display:flex;justify-content:space-between;font-size:12px;color:var(--gold);font-weight:800;letter-spacing:1px;padding:4px 6px 12px;border-bottom:2px solid var(--gold)}
+.phone .ok{background:#0A1A10;color:var(--green);font-size:12px;padding:10px;border-radius:8px;margin:12px 0}
+.phone .t{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;display:flex;gap:10px;align-items:center}
+.phone .b{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);flex-shrink:0}
+.phone .b.on{background:var(--green);border-color:var(--green)}
+.phone .p{font-size:10px;font-weight:800;margin:10px 0 6px}
+footer{border-top:1px solid var(--border);padding:30px 0;color:var(--dim);font-size:13px;text-align:center}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script>
-const{useState,useEffect}=React;
-const T={gold:"#C8973A",goldLight:"#E8B84B",bg:"#0F0F0D",surface:"#161614",card:"#1C1C19",border:"#2A2A25",text:"#F0EBE0",textMuted:"#888880",textDim:"#555550",red:"#E05A3A",orange:"#E07A3A",green:"#4CAF7A",blue:"#4A8FC8",purple:"#8A6CC8"};
-const STATUS={Active:{bg:"#2A1F0A",text:"#E8B84B",dot:"#C8973A"},"Estimate Sent":{bg:"#0A1525",text:"#4A8FC8",dot:"#3A7AB8"},Completed:{bg:"#0A1F12",text:"#4CAF7A",dot:"#3A9F6A"},Lead:{bg:"#1A0A2A",text:"#8A6CC8",dot:"#7A5CB8"}};
-const PRIORITY={"MUST FINISH TODAY":{color:T.red,label:"🔴 MUST FINISH TODAY"},"HIGH PRIORITY":{color:T.orange,label:"🟠 HIGH PRIORITY"},NORMAL:{color:T.text,label:"⚪ NORMAL"},"WHEN TIME ALLOWS":{color:T.textDim,label:"⚫ WHEN TIME ALLOWS"}};
-const WORKERS=[{id:1,name:"Mike Caruso",role:"Lead Carpenter",phone:"609-555-0101",access:"supervisor",active:true},{id:2,name:"Justin Reyes",role:"Carpenter",phone:"609-555-0102",access:"worker",active:true},{id:3,name:"Dave Pinto",role:"Laborer",phone:"609-555-0103",access:"worker",active:true},{id:4,name:"Carlos Mendez",role:"Carpenter",phone:"609-555-0104",access:"worker",active:true}];
-const JOBS=[{id:1,client:"Tom & Lisa Brennan",address:"4412 Landis Ave, Sea Isle City",type:"Kitchen Remodel",status:"Active",estimate:48500,billed:24250,notes:"Custom cabinets ordered. Tile sub scheduled week of 4/28."},{id:2,client:"Robert Piazza",address:"209 JFK Blvd, Sea Isle City",type:"Deck & Siding",status:"Estimate Sent",estimate:31200,billed:0,notes:"Fiberglass deck + PVC trim. Awaiting signed contract."},{id:3,client:"Carol Weston",address:"717 Central Ave, Sea Isle City",type:"Bathroom Renovation",status:"Completed",estimate:22800,billed:22800,notes:"Full gut reno. Final walkthrough done."},{id:4,client:"Frank & Diane Morrow",address:"54 42nd St, Sea Isle City",type:"Window & Door Replacement",status:"Lead",estimate:14600,billed:0,notes:"Referred by Brennan job."}];
-const INIT_TASKS=[{id:1,jobId:1,workerId:1,text:"Frame out pantry wall",priority:"MUST FINISH TODAY",done:false,carriedOver:false,assignedBy:null},{id:2,jobId:1,workerId:1,text:"Install upper cabinet boxes",priority:"HIGH PRIORITY",done:false,carriedOver:false,assignedBy:null},{id:3,jobId:1,workerId:2,text:"Hang drywall — closet wall",priority:"MUST FINISH TODAY",done:false,carriedOver:true,assignedBy:null},{id:4,jobId:1,workerId:2,text:"Hang drywall — back bedroom wall",priority:"HIGH PRIORITY",done:false,carriedOver:true,assignedBy:null},{id:5,jobId:1,workerId:2,text:"Clean up second floor",priority:"NORMAL",done:false,carriedOver:false,assignedBy:1},{id:6,jobId:2,workerId:3,text:"Demo existing deck boards",priority:"MUST FINISH TODAY",done:false,carriedOver:false,assignedBy:null}];
-const INIT_MATERIALS=[{id:1,jobId:1,workerId:2,item:'4 sheets 1/2" drywall',qty:"4 sheets",urgent:true,ordered:false},{id:2,jobId:1,workerId:1,item:'Box of 3" cabinet screws',qty:"1 box",urgent:false,ordered:false},{id:3,jobId:2,workerId:3,item:"Ledger board 2x10x16",qty:"3 pieces",urgent:true,ordered:false}];
-const TOOLS=[{id:1,name:"Framing Nailer #1",tag:"MH-001",checkedOutBy:1,condition:"Good"},{id:2,name:"Framing Nailer #2",tag:"MH-002",checkedOutBy:2,condition:"Good"},{id:3,name:"Miter Saw",tag:"MH-003",checkedOutBy:1,condition:"Good"},{id:4,name:"Compressor",tag:"MH-004",checkedOutBy:3,condition:"Good"},{id:5,name:"Finish Nailer",tag:"MH-005",checkedOutBy:2,condition:"Needs new tip"},{id:6,name:"Router Kit",tag:"MH-006",checkedOutBy:null,condition:"Good"}];
-const CLOCKINS=[{id:1,workerId:1,jobId:1,clockIn:"6:48 AM",clockOut:null,date:"today",location:"4412 Landis Ave"},{id:2,workerId:2,jobId:1,clockIn:"6:52 AM",clockOut:null,date:"today",location:"4412 Landis Ave"},{id:3,workerId:3,jobId:2,clockIn:"7:05 AM",clockOut:null,date:"today",location:"209 JFK Blvd"}];
-const fmt$=n=>"$"+Number(n).toLocaleString();
-const e=React.createElement;
+<div class="wrap">
+  <nav>
+    <a class="logo" href="/"><span>C</span>CREWDAY</a>
+    <a class="btn sm" href="/app">Open the app</a>
+  </nav>
 
-function Badge({status}){const s=STATUS[status]||{bg:"#222",text:"#aaa",dot:"#aaa"};return e("span",{style:{background:s.bg,color:s.text,borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:700,display:"inline-flex",alignItems:"center",gap:5}},e("span",{style:{width:6,height:6,borderRadius:"50%",background:s.dot,display:"inline-block"}}),status)}
+  <div class="hero">
+    <div class="eyebrow">Built by a contractor, for contractors</div>
+    <h1>Stop running your crew <em>from your truck's phone.</em></h1>
+    <p class="lead">CrewDay shows you who's on site, what's getting done, and what materials your guys need. No more 7am phone calls, no more "nobody told me", no more mystery hours.</p>
+    <div class="ctas">
+      <a class="btn" href="/app">Start free, no card needed</a>
+      <a class="btn ghost" href="#pricing">See pricing</a>
+    </div>
+    <div class="fine">Free for up to 3 crew members. Set up in under 2 minutes.</div>
 
-function PTag({p}){const c=PRIORITY[p]||PRIORITY.NORMAL;return e("span",{style:{color:c.color,fontSize:11,fontWeight:700}},c.label)}
+    <div class="phone" aria-hidden="true">
+      <div class="bar"><span>SMITH BUILDERS</span><span style="color:var(--green)">● ON SITE</span></div>
+      <div class="ok">✓ Clocked in at 6:52 AM, Brennan Kitchen</div>
+      <div class="p" style="color:var(--red)">🔴 MUST FINISH TODAY</div>
+      <div class="t"><div class="b on"></div><s style="color:var(--dim)">Frame out pantry wall</s></div>
+      <div class="t"><div class="b"></div>Hang drywall, closet wall</div>
+      <div class="p" style="color:#E07A3A">🟠 HIGH PRIORITY</div>
+      <div class="t"><div class="b"></div>Install upper cabinet boxes</div>
+    </div>
+  </div>
+</div>
 
-function Btn({children,onClick,variant,style,disabled}){
-  const v=variant||"primary";
-  const base={border:"none",borderRadius:7,padding:"9px 18px",fontSize:13,fontWeight:700,cursor:disabled?"not-allowed":"pointer",opacity:disabled?0.4:1};
-  const vs={primary:{background:T.gold,color:"#111"},ghost:{background:"transparent",color:T.textMuted,border:"1px solid "+T.border},danger:{background:"#3A1A1A",color:T.red,border:"1px solid #4A2020"},success:{background:"#0A2A18",color:T.green,border:"1px solid #1A4A28"}};
-  return e("button",{onClick:disabled?undefined:onClick,style:{...base,...vs[v],...style}},children)
-}
+<section>
+  <div class="wrap grid g2" style="align-items:center">
+    <div>
+      <h2>Sound familiar?</h2>
+      <p style="color:var(--muted)">Big software like Procore is built for 200-person GCs. A group text is chaos. Small crews are stuck in between.</p>
+    </div>
+    <ul class="pain card">
+      <li><b>"We ran out of drywall at 10am."</b> Someone knew yesterday and didn't say anything.</li>
+      <li><b>"Who has the framing nailer?"</b> It's been missing for two weeks.</li>
+      <li><b>"Did anyone lock up?"</b> And the homeowner found pizza boxes on their counter.</li>
+      <li><b>"What did you guys get done today?"</b> Three phone calls to find out.</li>
+    </ul>
+  </div>
+</section>
 
-function App(){
-  const[view,setView]=useState("boss");
-  const[bossTab,setBossTab]=useState("dashboard");
-  const[workerView,setWorkerView]=useState("select");
-  const[activeWorker,setActiveWorker]=useState(null);
-  const[workerTab,setWorkerTab]=useState("tasks");
-  const[tasks,setTasks]=useState(INIT_TASKS);
-  const[materials,setMaterials]=useState(INIT_MATERIALS);
-  const[clockIns,setClockIns]=useState(CLOCKINS);
-  const[selectedJob,setSelectedJob]=useState(null);
-  const[wrapStep,setWrapStep]=useState(0);
-  const[wrapConfirmed,setWrapConfirmed]=useState(false);
-  const onSite=clockIns.filter(c=>!c.clockOut);
-  const pendingMats=materials.filter(m=>!m.ordered);
-  const myTasks=activeWorker?tasks.filter(t=>t.workerId===activeWorker.id):[];
-  const myJob=activeWorker?JOBS.find(j=>j.id===(myTasks[0]?.jobId)):null;
-  const myCI=activeWorker?clockIns.find(c=>c.workerId===activeWorker.id&&c.date==="today"):null;
-  const BOSS_TABS=["dashboard","jobs","workers","materials","tools","schedule"];
-  const CREW_TABS=["tasks","checkin","materials","tools","wrapup"];
-  const WRAP_STEPS=["Tasks Done","What's Left","Materials","Tools","Orders","Cleanup","Confirm"];
-  const CLEANUP=["All tools put away","Nothing on homeowner's furniture","All trash and food removed","All toilets flushed","Work area swept","Doors and windows locked"];
+<section>
+  <div class="wrap">
+    <div class="center"><h2>Everything a small crew needs. Nothing it doesn't.</h2>
+    <p class="sub">Your crew taps their name, and that's it. No logins, no training, no 40-page manual.</p></div>
+    <div class="grid g3">
+      <div class="card"><div class="icon">📍</div><h3>Clock in / clock out</h3><p>See who's on site at a glance. Timesheets build themselves, and you can export them to CSV for payroll.</p></div>
+      <div class="card"><div class="icon">✅</div><h3>Prioritized daily tasks</h3><p>"Must finish today" vs. "when time allows." Anything unfinished carries over automatically.</p></div>
+      <div class="card"><div class="icon">📦</div><h3>Material requests</h3><p>The crew flags what they need, urgent items included, and you get one clean pickup list for the supply house.</p></div>
+      <div class="card"><div class="icon">🔧</div><h3>Tool tracker</h3><p>Know who has every nailer, saw, and compressor. Tools stop walking off.</p></div>
+      <div class="card"><div class="icon">🔒</div><h3>End-of-day wrap-up</h3><p>What got done, what's left, what's needed tomorrow, and a site-cleanup checklist the homeowner will thank you for.</p></div>
+      <div class="card"><div class="icon">📊</div><h3>Boss dashboard</h3><p>Active jobs, contract value, unbilled balance, crew status, and today's reports, all on one screen.</p></div>
+    </div>
+  </div>
+</section>
 
-  if(view==="boss"){
-    return e("div",{style:{fontFamily:"Georgia,serif",background:T.bg,minHeight:"100vh",color:T.text}},
-      e("div",{style:{background:T.surface,borderBottom:"2px solid "+T.gold,padding:"0 24px",display:"flex",alignItems:"center",justifyContent:"space-between",height:60,position:"sticky",top:0,zIndex:50}},
-        e("div",{style:{display:"flex",alignItems:"center",gap:12}},
-          e("div",{style:{width:36,height:36,background:T.gold,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,color:"#111",fontSize:18}},"M"),
-          e("div",null,e("div",{style:{fontSize:14,fontWeight:700,color:T.gold,letterSpacing:1.5}},"MADDEN HOMES"),e("div",{style:{fontSize:10,color:T.textDim}},"FIELD APP — BOSS VIEW"))
-        ),
-        Btn({children:"Switch to Crew View →",onClick:()=>setView("worker"),variant:"ghost",style:{fontSize:11,padding:"6px 12px"}})
-      ),
-      e("div",{style:{display:"flex"}},
-        e("div",{style:{width:180,background:T.surface,minHeight:"calc(100vh - 60px)",borderRight:"1px solid "+T.border,padding:"20px 0",flexShrink:0}},
-          BOSS_TABS.map(tab=>e("div",{key:tab,onClick:()=>setBossTab(tab),style:{padding:"10px 20px",cursor:"pointer",fontSize:12,letterSpacing:1,textTransform:"uppercase",background:bossTab===tab?"#1F1F1C":"transparent",color:bossTab===tab?T.gold:T.textMuted,borderLeft:bossTab===tab?"3px solid "+T.gold:"3px solid transparent"}},
-            {dashboard:"📊 Dashboard",jobs:"🏗 Jobs",workers:"👷 Workers",materials:"📦 Materials",tools:"🔧 Tools",schedule:"📅 Schedule"}[tab]
-          )),
-          e("div",{style:{margin:"20px 12px 0",padding:14,background:T.card,borderRadius:8,border:"1px solid "+T.border}},
-            e("div",{style:{fontSize:10,color:T.textDim,letterSpacing:1,textTransform:"uppercase",marginBottom:8}},"On Site Today"),
-            e("div",{style:{fontSize:28,fontWeight:700,color:T.gold}},onSite.length),
-            e("div",{style:{fontSize:10,color:T.textDim,marginTop:4}},"of "+WORKERS.filter(w=>w.active).length+" workers")
-          ),
-          e("div",{style:{margin:"10px 12px 0",padding:14,background:T.card,borderRadius:8,border:"1px solid "+T.border}},
-            e("div",{style:{fontSize:10,color:T.textDim,letterSpacing:1,textTransform:"uppercase",marginBottom:8}},"Material Requests"),
-            e("div",{style:{fontSize:28,fontWeight:700,color:pendingMats.length>0?T.red:T.green}},pendingMats.length),
-            e("div",{style:{fontSize:10,color:T.textDim,marginTop:4}},"pending pickup")
-          )
-        ),
-        e("div",{style:{flex:1,padding:28,overflowY:"auto",maxHeight:"calc(100vh - 60px)"}},
-          bossTab==="dashboard"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:4}},"Good Morning, Mark"),
-            e("p",{style:{color:T.textMuted,fontSize:13,marginBottom:24}},"Here's your day at a glance"),
-            e("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:28}},
-              [{label:"Active Jobs",value:JOBS.filter(j=>j.status==="Active").length,sub:"in progress",color:T.gold},{label:"On Site Now",value:onSite.length,sub:"clocked in",color:T.green},{label:"Material Requests",value:pendingMats.length,sub:"need pickup",color:pendingMats.length>0?T.red:T.green},{label:"Active Value",value:fmt$(JOBS.filter(j=>j.status==="Active").reduce((s,j)=>s+j.estimate,0)),sub:"in active jobs",color:T.text}]
-              .map(s=>e("div",{key:s.label,style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},e("div",{style:{fontSize:10,color:T.textDim,letterSpacing:1,textTransform:"uppercase",marginBottom:8}},s.label),e("div",{style:{fontSize:26,fontWeight:700,color:s.color}},s.value),e("div",{style:{fontSize:10,color:T.textDim,marginTop:4}},s.sub)))
-            ),
-            e("div",{style:{fontSize:11,color:T.gold,fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:14}},"WHO'S ON SITE TODAY"),
-            e("div",{style:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:12,marginBottom:28}},
-              WORKERS.filter(w=>w.active).map(w=>{
-                const ci=clockIns.find(c=>c.workerId===w.id);
-                const wt=tasks.filter(t=>t.workerId===w.id&&!t.done);
-                return e("div",{key:w.id,style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},
-                  e("div",{style:{fontWeight:700,fontSize:14}},w.name),
-                  e("div",{style:{fontSize:11,color:T.textMuted,marginTop:2}},w.role),
-                  ci?e("div",{style:{fontSize:11,color:T.green,marginTop:6}},"✓ In at "+ci.clockIn+" — "+ci.location):e("div",{style:{fontSize:11,color:T.red,marginTop:6}},"✗ Not clocked in"),
-                  e("div",{style:{fontSize:11,color:T.textDim,marginTop:4}},wt.length+" open tasks")
-                )
-              })
-            ),
-            pendingMats.length>0&&e("div",null,
-              e("div",{style:{fontSize:11,color:T.gold,fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:14}},"TODAY'S MATERIAL PICKUP LIST"),
-              e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20,marginBottom:28}},
-                pendingMats.map((m,i)=>{
-                  const w=WORKERS.find(x=>x.id===m.workerId);
-                  const j=JOBS.find(x=>x.id===m.jobId);
-                  return e("div",{key:m.id,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:i<pendingMats.length-1?"1px solid "+T.border:"none"}},
-                    e("div",null,e("span",{style:{fontWeight:700,color:T.text,fontSize:13}},m.item),e("span",{style:{color:T.textMuted,fontSize:12,marginLeft:8}},m.qty),m.urgent&&e("span",{style:{marginLeft:8,background:"#3A0A0A",color:T.red,fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10}},"URGENT"),e("div",{style:{fontSize:11,color:T.textDim,marginTop:2}},(w?.name||"")+" — "+(j?.client||""))),
-                    Btn({children:"Mark Ordered",onClick:()=>setMaterials(prev=>prev.map(x=>x.id===m.id?{...x,ordered:true}:x)),variant:"success",style:{fontSize:11,padding:"5px 12px"}})
-                  )
-                })
-              )
-            ),
-            e("div",{style:{fontSize:11,color:T.gold,fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:14}},"ALL JOBS"),
-            e("div",{style:{border:"1px solid "+T.border,borderRadius:8,overflow:"hidden"}},
-              e("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:13}},
-                e("thead",null,e("tr",{style:{background:T.surface,borderBottom:"1px solid "+T.border}},["Client","Address","Type","Status","Estimate","Billed"].map(h=>e("th",{key:h,style:{padding:"10px 14px",textAlign:"left",color:T.textDim,fontSize:10,letterSpacing:1,textTransform:"uppercase",fontWeight:"normal"}},h)))),
-                e("tbody",null,JOBS.map((job,i)=>e("tr",{key:job.id,onClick:()=>setSelectedJob(job),style:{borderBottom:"1px solid "+T.border,background:i%2===0?T.card:T.surface,cursor:"pointer"}},
-                  e("td",{style:{padding:"12px 14px",fontWeight:700}},job.client),
-                  e("td",{style:{padding:"12px 14px",color:T.textMuted,fontSize:12}},job.address),
-                  e("td",{style:{padding:"12px 14px",color:T.textMuted}},job.type),
-                  e("td",{style:{padding:"12px 14px"}},Badge({status:job.status})),
-                  e("td",{style:{padding:"12px 14px",color:T.gold,fontFamily:"monospace"}},fmt$(job.estimate)),
-                  e("td",{style:{padding:"12px 14px",color:T.textMuted,fontFamily:"monospace"}},fmt$(job.billed))
-                )))
-              )
-            )
-          ),
-          bossTab==="workers"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:24}},"Workers"),
-            e("div",{style:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}},
-              WORKERS.map(w=>{
-                const ci=clockIns.find(c=>c.workerId===w.id);
-                const wt=tasks.filter(t=>t.workerId===w.id);
-                return e("div",{key:w.id,style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},
-                  e("div",{style:{fontWeight:700,fontSize:15}},w.name),
-                  e("div",{style:{fontSize:12,color:T.textMuted}},w.role),
-                  e("div",{style:{fontSize:11,color:T.textDim,marginTop:2}},w.phone),
-                  ci?e("div",{style:{fontSize:11,color:T.green,marginTop:8}},"✓ In at "+ci.clockIn):e("div",{style:{fontSize:11,color:T.red,marginTop:8}},"✗ Not on site"),
-                  e("div",{style:{fontSize:11,color:T.textDim,marginTop:4}},wt.filter(t=>t.done).length+"/"+wt.length+" tasks done")
-                )
-              })
-            )
-          ),
-          bossTab==="materials"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:24}},"Material Requests"),
-            e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},
-              materials.map((m,i)=>{
-                const w=WORKERS.find(x=>x.id===m.workerId);
-                const j=JOBS.find(x=>x.id===m.jobId);
-                return e("div",{key:m.id,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:i<materials.length-1?"1px solid "+T.border:"none",opacity:m.ordered?0.4:1}},
-                  e("div",null,e("div",{style:{display:"flex",alignItems:"center",gap:8}},e("span",{style:{fontWeight:700,fontSize:13}},m.item),e("span",{style:{color:T.textMuted,fontSize:12}},"— "+m.qty),m.urgent&&!m.ordered&&e("span",{style:{background:"#3A0A0A",color:T.red,fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10}},"URGENT"),m.ordered&&e("span",{style:{background:"#0A2A18",color:T.green,fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10}},"✓ ORDERED")),e("div",{style:{fontSize:11,color:T.textDim,marginTop:3}},(w?.name||"")+" · "+(j?.client||"")+" · "+(j?.address||""))),
-                  !m.ordered&&Btn({children:"Mark Ordered",onClick:()=>setMaterials(prev=>prev.map(x=>x.id===m.id?{...x,ordered:true}:x)),variant:"success",style:{fontSize:11,padding:"5px 12px"}})
-                )
-              })
-            )
-          ),
-          bossTab==="tools"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:24}},"Tool Tracker"),
-            e("div",{style:{border:"1px solid "+T.border,borderRadius:8,overflow:"hidden"}},
-              e("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:12}},
-                e("thead",null,e("tr",{style:{background:T.surface}},["Tool","Tag","Checked Out To","Condition"].map(h=>e("th",{key:h,style:{padding:"10px 12px",textAlign:"left",color:T.textDim,fontSize:10,letterSpacing:1,textTransform:"uppercase",fontWeight:"normal"}},h)))),
-                e("tbody",null,TOOLS.map(tool=>{const w=WORKERS.find(x=>x.id===tool.checkedOutBy);return e("tr",{key:tool.id,style:{borderBottom:"1px solid "+T.border}},e("td",{style:{padding:"11px 12px",fontWeight:700}},tool.name),e("td",{style:{padding:"11px 12px",color:T.textMuted,fontFamily:"monospace"}},tool.tag),e("td",{style:{padding:"11px 12px",color:w?T.text:T.textDim}},w?.name||"— In shop"),e("td",{style:{padding:"11px 12px"}},e("span",{style:{color:tool.condition==="Good"?T.green:T.orange,fontSize:11}},tool.condition==="Good"?"✓ Good":"⚠ "+tool.condition)))}))
-              )
-            )
-          ),
-          bossTab==="jobs"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:24}},"All Jobs"),
-            e("div",{style:{border:"1px solid "+T.border,borderRadius:8,overflow:"hidden"}},
-              e("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:13}},
-                e("thead",null,e("tr",{style:{background:T.surface,borderBottom:"1px solid "+T.border}},["Client","Address","Type","Status","Estimate","Billed"].map(h=>e("th",{key:h,style:{padding:"10px 14px",textAlign:"left",color:T.textDim,fontSize:10,letterSpacing:1,textTransform:"uppercase",fontWeight:"normal"}},h)))),
-                e("tbody",null,JOBS.map((job,i)=>e("tr",{key:job.id,onClick:()=>setSelectedJob(job),style:{borderBottom:"1px solid "+T.border,background:i%2===0?T.card:T.surface,cursor:"pointer"}},e("td",{style:{padding:"12px 14px",fontWeight:700}},job.client),e("td",{style:{padding:"12px 14px",color:T.textMuted,fontSize:12}},job.address),e("td",{style:{padding:"12px 14px",color:T.textMuted}},job.type),e("td",{style:{padding:"12px 14px"}},Badge({status:job.status})),e("td",{style:{padding:"12px 14px",color:T.gold,fontFamily:"monospace"}},fmt$(job.estimate)),e("td",{style:{padding:"12px 14px",color:T.textMuted,fontFamily:"monospace"}},fmt$(job.billed)))))
-              )
-            )
-          ),
-          bossTab==="schedule"&&e("div",null,
-            e("h2",{style:{fontSize:22,color:T.gold,fontWeight:"normal",marginBottom:24}},"Schedule & Reminders"),
-            e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},
-              e("div",{style:{fontSize:13,color:T.textMuted,marginBottom:16,fontWeight:700}},"Automatic Daily Reminders"),
-              [{time:"7:00 AM",msg:"Submit your complete material list by 4pm today.",days:"Mon–Fri"},{time:"12:00 PM",msg:"Midday check-in — confirm you are still on site.",days:"Mon–Fri"},{time:"3:30 PM",msg:"End of day wrap-up is now open. Complete before clock-out.",days:"Mon–Fri"},{time:"Friday 3pm",msg:"Weekly deep clean checklist is now active.",days:"Fri only"},{time:"Monday 7am",msg:"Tool check-out required this morning.",days:"Mon only"}]
-              .map((r,i)=>e("div",{key:i,style:{display:"flex",gap:16,padding:"10px 0",borderBottom:i<4?"1px solid "+T.border:"none"}},e("div",{style:{width:110,flexShrink:0}},e("div",{style:{fontSize:12,color:T.gold,fontWeight:700}},r.time),e("div",{style:{fontSize:10,color:T.textDim}},r.days)),e("div",{style:{fontSize:12,color:T.textMuted}},r.msg)))
-            )
-          )
-        )
-      ),
-      selectedJob&&e("div",{style:{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200},onClick:()=>setSelectedJob(null)},
-        e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:12,width:520,maxHeight:"85vh",overflowY:"auto",padding:32,position:"relative"},onClick:ev=>ev.stopPropagation()},
-          e("button",{onClick:()=>setSelectedJob(null),style:{position:"absolute",top:16,right:16,background:"none",border:"none",color:T.textMuted,fontSize:20,cursor:"pointer"}},"✕"),
-          Badge({status:selectedJob.status}),
-          e("h2",{style:{color:T.gold,fontWeight:"normal",fontSize:20,margin:"10px 0 4px"}},selectedJob.client),
-          e("p",{style:{color:T.textMuted,fontSize:13,margin:"0 0 20px"}},selectedJob.address),
-          e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}},
-            [["Job Type",selectedJob.type],["Estimate",fmt$(selectedJob.estimate)],["Billed",fmt$(selectedJob.billed)],["Balance",fmt$(selectedJob.estimate-selectedJob.billed)]].map(([l,v])=>e("div",{key:l,style:{background:T.surface,borderRadius:6,padding:"10px 14px"}},e("div",{style:{fontSize:10,color:T.textDim,textTransform:"uppercase",letterSpacing:1,marginBottom:4}},l),e("div",{style:{fontSize:14}},v)))
-          ),
-          e("div",{style:{background:T.surface,borderRadius:6,padding:"12px 14px"}},e("div",{style:{fontSize:10,color:T.textDim,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Notes"),e("div",{style:{fontSize:13,color:T.textMuted,lineHeight:1.6}},selectedJob.notes))
-        )
-      )
-    )
-  }
+<section id="pricing">
+  <div class="wrap">
+    <div class="center"><h2>One flat price. Your whole crew.</h2>
+    <p class="sub">Other apps charge per user, so your bill climbs every time you hire. CrewDay doesn't.</p></div>
+    <div class="grid g2" style="max-width:760px;margin:0 auto">
+      <div class="card plan">
+        <h3>Starter</h3>
+        <div class="price">$0 <small>forever</small></div>
+        <ul><li>Up to 3 crew members</li><li>2 open jobs at a time</li><li>Tasks, materials, tools</li><li>Daily wrap-up reports</li></ul>
+        <a class="btn ghost" style="width:100%;text-align:center" href="/app">Start free</a>
+      </div>
+      <div class="card plan pro">
+        <div class="tag">MOST POPULAR</div>
+        <h3>Pro</h3>
+        <div class="price">$29 <small>/ month</small></div>
+        <ul><li>Unlimited crew members</li><li>Unlimited jobs</li><li>Timesheet export for payroll</li><li>Everything in Starter</li><li>Priority support</li></ul>
+        <a class="btn" style="width:100%;text-align:center" href="/app">Start free, upgrade anytime</a>
+      </div>
+    </div>
+    <p class="fine center">Cancel anytime. No contracts, no setup fees.</p>
+  </div>
+</section>
 
-  if(view==="worker"&&workerView==="select"){
-    return e("div",{style:{fontFamily:"Georgia,serif",background:T.bg,minHeight:"100vh",color:T.text,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24}},
-      e("div",{style:{width:44,height:44,background:T.gold,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,color:"#111",fontSize:22,marginBottom:16}},"M"),
-      e("div",{style:{fontSize:18,color:T.gold,fontWeight:700,letterSpacing:1,marginBottom:4}},"MADDEN HOMES FIELD APP"),
-      e("div",{style:{fontSize:12,color:T.textMuted,marginBottom:32}},"Who are you?"),
-      e("div",{style:{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}},
-        WORKERS.filter(w=>w.active).map(w=>e("div",{key:w.id,onClick:()=>{setActiveWorker(w);setWorkerView("main");setWorkerTab("tasks")},style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:"16px 20px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}},e("div",null,e("div",{style:{fontWeight:700,fontSize:15}},w.name),e("div",{style:{fontSize:12,color:T.textMuted}},w.role)),e("span",{style:{color:T.gold,fontSize:20}},"→")))
-      ),
-      Btn({children:"← Boss View",onClick:()=>setView("boss"),variant:"ghost",style:{marginTop:24,fontSize:11}})
-    )
-  }
+<section>
+  <div class="wrap" style="max-width:760px">
+    <h2 class="center" style="margin-bottom:26px">Questions</h2>
+    <details><summary>Do my guys need to create accounts?</summary><p>No. Open the app on a phone or a shared jobsite tablet, tap "Crew View", and each person taps their name.</p></details>
+    <details><summary>Does it work on phones?</summary><p>Yes. The crew side is built for phones first. Add it to your home screen and it works like an app.</p></details>
+    <details><summary>Where is my data stored?</summary><p>On your device. You can download a backup file anytime from Settings and restore it on another device.</p></details>
+    <details><summary>Can I cancel?</summary><p>Anytime, in one click. You drop back to the free plan and keep your data.</p></details>
+    <details><summary>Who built this?</summary><p>A working remodeling contractor who got tired of running the crew from a group text. It's what we use on our own jobs every day.</p></details>
+  </div>
+</section>
 
-  return e("div",{style:{fontFamily:"Georgia,serif",background:T.bg,minHeight:"100vh",color:T.text,maxWidth:500,margin:"0 auto"}},
-    e("div",{style:{background:T.surface,borderBottom:"2px solid "+T.gold,padding:"0 16px",display:"flex",alignItems:"center",justifyContent:"space-between",height:56,position:"sticky",top:0,zIndex:50}},
-      e("div",{style:{display:"flex",alignItems:"center",gap:10}},
-        e("div",{style:{width:32,height:32,background:T.gold,borderRadius:5,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,color:"#111",fontSize:16}},"M"),
-        e("div",null,e("div",{style:{fontSize:12,fontWeight:700,color:T.gold,letterSpacing:1}},"MADDEN HOMES"),e("div",{style:{fontSize:10,color:T.textDim}},activeWorker?.name))
-      ),
-      e("div",{style:{display:"flex",gap:8,alignItems:"center"}},
-        myCI&&!myCI.clockOut&&e("span",{style:{fontSize:10,color:T.green,fontWeight:700}},"● ON SITE"),
-        Btn({children:"← Switch",onClick:()=>{setWorkerView("select");setActiveWorker(null)},variant:"ghost",style:{fontSize:10,padding:"5px 10px"}})
-      )
-    ),
-    e("div",{style:{background:"#0A1A10",borderBottom:"1px solid #1A3A20",padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}},
-      e("div",null,
-        myCI?e("div",{style:{fontSize:12,color:T.green}},"✓ Clocked in at "+myCI.clockIn+" — "+myCI.location):e("div",{style:{fontSize:12,color:T.textMuted}},"You are not clocked in yet"),
-        e("div",{style:{fontSize:10,color:T.textDim,marginTop:2}},myJob?myJob.client+" — "+myJob.address:"No job assigned")
-      ),
-      !myCI?Btn({children:"CLOCK IN 📍",onClick:()=>setClockIns(prev=>[...prev,{id:Date.now(),workerId:activeWorker.id,jobId:myTasks[0]?.jobId,clockIn:"Now",clockOut:null,date:"today",location:myJob?.address||"Job Site"}]),variant:"success",style:{fontSize:12,padding:"8px 16px"}}):
-      !myCI.clockOut?Btn({children:"CLOCK OUT",onClick:()=>setWorkerTab("wrapup"),variant:"danger",style:{fontSize:12,padding:"8px 16px"}}):
-      e("span",{style:{fontSize:11,color:T.textDim}},"Clocked out "+myCI.clockOut)
-    ),
-    e("div",{style:{display:"flex",background:T.surface,borderBottom:"1px solid "+T.border,overflowX:"auto"}},
-      CREW_TABS.map(tab=>e("div",{key:tab,onClick:()=>setWorkerTab(tab),style:{padding:"11px 14px",cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:0.8,textTransform:"uppercase",whiteSpace:"nowrap",color:workerTab===tab?T.gold:T.textMuted,borderBottom:workerTab===tab?"2px solid "+T.gold:"2px solid transparent"}},
-        {tasks:"✅ Tasks",checkin:"📍 Check-In",materials:"📦 Materials",tools:"🔧 Tools",wrapup:"🔒 Wrap-Up"}[tab]
-      ))
-    ),
-    e("div",{style:{padding:16}},
-      workerTab==="tasks"&&e("div",null,
-        e("div",{style:{fontSize:11,color:T.textMuted,marginBottom:16}},"Your tasks for today — tap checkbox to mark done."),
-        ["MUST FINISH TODAY","HIGH PRIORITY","NORMAL","WHEN TIME ALLOWS"].map(pri=>{
-          const pts=myTasks.filter(t=>t.priority===pri);
-          if(!pts.length)return null;
-          return e("div",{key:pri,style:{marginBottom:20}},
-            e("div",{style:{marginBottom:8}},PTag({p:pri})),
-            pts.map(task=>e("div",{key:task.id,style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:"12px 14px",marginBottom:8,opacity:task.done?0.5:1,display:"flex",alignItems:"flex-start",gap:12}},
-              e("div",{onClick:()=>setTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t)),style:{width:22,height:22,borderRadius:5,flexShrink:0,cursor:"pointer",background:task.done?T.green:"transparent",border:"2px solid "+(task.done?T.green:T.border),display:"flex",alignItems:"center",justifyContent:"center",marginTop:1}},task.done&&e("span",{style:{color:"#fff",fontSize:13,fontWeight:900}},"✓")),
-              e("div",{style:{flex:1}},e("div",{style:{fontSize:13,color:T.text,textDecoration:task.done?"line-through":"none"}},task.text),task.carriedOver&&e("div",{style:{fontSize:10,color:T.orange,marginTop:3}},"↪ Carried over from yesterday"),task.assignedBy&&e("div",{style:{fontSize:10,color:T.purple,marginTop:3}},"Assigned by "+WORKERS.find(w=>w.id===task.assignedBy)?.name))
-            ))
-          )
-        })
-      ),
-      workerTab==="checkin"&&e("div",null,
-        e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20,marginBottom:16}},
-          e("div",{style:{fontSize:12,color:T.gold,fontWeight:700,marginBottom:12}},"Morning Start-of-Day Checklist"),
-          e("div",{style:{fontSize:12,color:T.orange,marginBottom:12,padding:10,background:"#1A0A00",borderRadius:6}},"⚠ Take a minute. Walk through this job in your head, step by step, like you're physically doing it. What tools do you need? What materials? Don't rely 100% on the list given to you."),
-          ["I have reviewed today's full task list","All required tools are on site","All materials for today are available","Any missing items have been flagged","Site protection is in place","I understand my priority tasks for today"].map((item,i)=>e("label",{key:i,style:{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:i<5?"1px solid "+T.border:"none",cursor:"pointer"}},e("input",{type:"checkbox",style:{width:18,height:18,accentColor:T.gold}}),e("span",{style:{fontSize:13}},item)))
-        ),
-        e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20}},
-          e("div",{style:{fontSize:12,color:T.gold,fontWeight:700,marginBottom:8}},"🎤 Voice Note to Mark"),
-          e("div",{style:{fontSize:12,color:T.textMuted,marginBottom:12}},"Something to flag first thing? Record a note — goes straight to Mark."),
-          Btn({children:"🎤 Hold to Record",variant:"ghost",style:{width:"100%",fontSize:13,padding:"12px"}})
-        )
-      ),
-      workerTab==="materials"&&e("div",null,
-        e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20,marginBottom:16}},
-          e("div",{style:{fontSize:12,color:T.gold,fontWeight:700,marginBottom:12}},"Add Material Request"),
-          e("div",{style:{marginBottom:10}},e("div",{style:{fontSize:11,color:T.textDim,marginBottom:4}},"What do you need?"),e("input",{placeholder:"e.g. 2x10x16 lumber",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"9px 12px",color:T.text,fontSize:13,boxSizing:"border-box"}})),
-          e("div",{style:{marginBottom:10}},e("div",{style:{fontSize:11,color:T.textDim,marginBottom:4}},"Quantity"),e("input",{placeholder:"e.g. 3 pieces",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"9px 12px",color:T.text,fontSize:13,boxSizing:"border-box"}})),
-          e("label",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:14,cursor:"pointer"}},e("input",{type:"checkbox",style:{accentColor:T.red}}),e("span",{style:{fontSize:12,color:T.red}},"URGENT — needed first thing tomorrow")),
-          Btn({children:"🎤 Speak Instead of Typing",variant:"ghost",style:{width:"100%",fontSize:13,marginBottom:10}}),
-          Btn({children:"Submit Request",style:{width:"100%",fontSize:13}})
-        ),
-        materials.filter(m=>m.workerId===activeWorker?.id).map(m=>e("div",{key:m.id,style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:12,marginBottom:8,display:"flex",justifyContent:"space-between"}},e("div",null,e("div",{style:{fontWeight:700,fontSize:13}},m.item),e("div",{style:{fontSize:11,color:T.textMuted}},m.qty)),e("span",{style:{fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:8,background:m.ordered?"#0A2A18":"#3A0A0A",color:m.ordered?T.green:T.red}},m.ordered?"✓ Ordered":"Pending")))
-      ),
-      workerTab==="tools"&&e("div",null,
-        e("div",{style:{fontSize:11,color:T.textMuted,marginBottom:16}},"Tools checked out to you. Confirm every Monday. Flag issues immediately."),
-        TOOLS.filter(t=>t.checkedOutBy===activeWorker?.id).map(tool=>e("div",{key:tool.id,style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:12,marginBottom:10,display:"flex",justifyContent:"space-between",alignItems:"center"}},e("div",null,e("div",{style:{fontWeight:700,fontSize:14}},tool.name),e("div",{style:{fontSize:11,color:T.textMuted,fontFamily:"monospace"}},tool.tag),e("div",{style:{fontSize:11,color:tool.condition==="Good"?T.green:T.orange,marginTop:4}},tool.condition==="Good"?"✓ Good condition":"⚠ "+tool.condition)),Btn({children:"Report Issue",variant:"ghost",style:{fontSize:11,padding:"6px 12px"}}))),
-        e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:10,padding:20,marginTop:16}},e("div",{style:{fontSize:12,color:T.gold,fontWeight:700,marginBottom:8}},"Transfer a Tool"),e("div",{style:{fontSize:12,color:T.textMuted,marginBottom:12}},"Moving a tool to another job? Log it here."),Btn({children:"+ Log Tool Transfer",variant:"ghost",style:{width:"100%",fontSize:12}}))
-      ),
-      workerTab==="wrapup"&&e("div",null,
-        e("div",{style:{background:"#1A0A00",border:"1px solid #3A2A00",borderRadius:8,padding:"12px 14px",marginBottom:16,fontSize:12,color:T.orange}},"⚠ Complete all "+WRAP_STEPS.length+" steps before you can clock out. Take your time — do it right."),
-        e("div",{style:{display:"flex",gap:4,marginBottom:20}},WRAP_STEPS.map((s,i)=>e("div",{key:i,onClick:()=>setWrapStep(i),style:{flex:1,height:4,borderRadius:4,cursor:"pointer",background:i<wrapStep?T.green:i===wrapStep?T.gold:T.border}}))),
-        e("div",{style:{fontSize:11,color:T.textMuted,marginBottom:16}},"Step "+(wrapStep+1)+" of "+WRAP_STEPS.length+": ",e("span",{style:{color:T.gold,fontWeight:700}},WRAP_STEPS[wrapStep])),
-        wrapStep===0&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:14}},"Which tasks did you complete today?"),myTasks.map(task=>e("label",{key:task.id,style:{display:"flex",alignItems:"center",gap:12,padding:"9px 0",borderBottom:"1px solid "+T.border,cursor:"pointer"}},e("input",{type:"checkbox",defaultChecked:task.done,style:{width:18,height:18,accentColor:T.green}}),e("span",{style:{fontSize:13}},task.text)))),
-        wrapStep===1&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:6}},"What's left? This becomes tomorrow's first task automatically."),e("textarea",{rows:4,placeholder:"e.g. Drywall closet wall still needs to be hung...",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"10px 12px",color:T.text,fontSize:13,resize:"vertical",boxSizing:"border-box",marginTop:8}}),Btn({children:"🎤 Speak Instead",variant:"ghost",style:{width:"100%",marginTop:10,fontSize:12}})),
-        wrapStep===2&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:6}},"What materials do you need for tomorrow? Be thorough — this is your one chance."),e("textarea",{rows:5,placeholder:"e.g. 4 sheets drywall, box of screws...",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"10px 12px",color:T.text,fontSize:13,resize:"vertical",boxSizing:"border-box",marginTop:8}}),Btn({children:"🎤 Speak Instead",variant:"ghost",style:{width:"100%",marginTop:10,fontSize:12}}),e("div",{style:{marginTop:12,padding:10,background:"#1A0A00",borderRadius:6,fontSize:11,color:T.orange}},"⚠ Anything not on this list that you request tomorrow will be flagged automatically.")),
-        wrapStep===3&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:6}},"Any tools you need tomorrow that aren't on site?"),e("textarea",{rows:3,placeholder:"e.g. Need the finish nailer — Mike has it.",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"10px 12px",color:T.text,fontSize:13,resize:"vertical",boxSizing:"border-box",marginTop:8}}),Btn({children:"🎤 Speak Instead",variant:"ghost",style:{width:"100%",marginTop:10,fontSize:12}})),
-        wrapStep===4&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:6}},"Anything to order, schedule, or arrange? Subs, deliveries, inspections?"),e("textarea",{rows:3,placeholder:"e.g. Tile sub needs to be scheduled next week.",style:{width:"100%",background:T.surface,border:"1px solid "+T.border,borderRadius:6,padding:"10px 12px",color:T.text,fontSize:13,resize:"vertical",boxSizing:"border-box",marginTop:8}}),Btn({children:"🎤 Speak Instead",variant:"ghost",style:{width:"100%",marginTop:10,fontSize:12}})),
-        wrapStep===5&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},e("div",{style:{fontSize:13,color:T.text,marginBottom:14}},"Confirm the job site is clean and secure."),CLEANUP.map((item,i)=>e("label",{key:i,style:{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<CLEANUP.length-1?"1px solid "+T.border:"none",cursor:"pointer"}},e("input",{type:"checkbox",style:{width:20,height:20,accentColor:T.green}}),e("span",{style:{fontSize:13}},item)))),
-        wrapStep===6&&e("div",{style:{background:T.card,border:"1px solid "+T.border,borderRadius:8,padding:14}},
-          e("div",{style:{fontSize:14,color:T.text,marginBottom:16,lineHeight:1.6}},"By confirming, your wrap-up is complete. Your material list is final. New requests tomorrow not on this list will be flagged."),
-          e("label",{style:{display:"flex",alignItems:"flex-start",gap:12,marginBottom:20,cursor:"pointer"}},e("input",{type:"checkbox",style:{width:22,height:22,accentColor:T.green,marginTop:2},onChange:ev=>setWrapConfirmed(ev.target.checked)}),e("span",{style:{fontSize:13,color:T.text}},"I have thought through tomorrow's work. This wrap-up is complete and my material list is final.")),
-          Btn({children:"✓ SUBMIT & CLOCK OUT",disabled:!wrapConfirmed,onClick:()=>{setClockIns(prev=>prev.map(c=>c.workerId===activeWorker?.id&&c.date==="today"?{...c,clockOut:"Now"}:c));setWrapStep(0);setWorkerTab("tasks");setWrapConfirmed(false)},style:{width:"100%",fontSize:14,padding:"14px"}})
-        ),
-        e("div",{style:{display:"flex",gap:10,marginTop:16}},
-          wrapStep>0&&Btn({children:"← Back",onClick:()=>setWrapStep(s=>s-1),variant:"ghost",style:{flex:1}}),
-          wrapStep<WRAP_STEPS.length-1&&Btn({children:"Next →",onClick:()=>setWrapStep(s=>s+1),style:{flex:1}})
-        )
-      )
-    )
-  )
-}
+<section class="center">
+  <div class="wrap">
+    <h2>Get your mornings back.</h2>
+    <p class="sub">Set it up tonight. Your crew is using it tomorrow at 7am.</p>
+    <a class="btn" href="/app">Start free →</a>
+  </div>
+</section>
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
-</script>
+<footer><div class="wrap">© <span id="y"></span> CrewDay · <a href="/app">Open app</a></div></footer>
+<script>document.getElementById("y").textContent=new Date().getFullYear()</script>
 </body>
 </html>
