@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0F0F0D"/>
+<title>CrewDay — Field App</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js" crossorigin></script>
+<style>
+:root{--gold:#C8973A;--gold2:#E8B84B;--bg:#0F0F0D;--surface:#161614;--card:#1C1C19;--border:#2A2A25;--text:#F0EBE0;--muted:#9A9A90;--dim:#66665E;--red:#E05A3A;--orange:#E07A3A;--green:#4CAF7A;--blue:#4A8FC8;--purple:#8A6CC8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45}
+input,textarea,select,button{font:inherit;color:inherit}
+input,textarea,select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px 12px;color:var(--text)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:-1px}
+label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:12px 0 5px}
+.btn{border:none;border-radius:7px;padding:9px 16px;font-weight:700;cursor:pointer;background:var(--gold);color:#111;white-space:nowrap}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn.danger{background:#3A1A1A;color:var(--red);border:1px solid #4A2020}
+.btn.ok{background:#0A2A18;color:var(--green);border:1px solid #1A4A28}
+.btn.sm{padding:5px 11px;font-size:12px}
+.btn.big{padding:14px 20px;font-size:15px;width:100%}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.h2{font-size:22px;color:var(--gold);font-weight:600;margin-bottom:4px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.sec{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:26px 0 12px}
+.label{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.stat{font-size:26px;font-weight:700;margin:6px 0 2px}
+.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700}
+.list>*{padding:12px 0;border-bottom:1px solid var(--border)}
+.list>*:last-child{border-bottom:none}
+.topbar{background:var(--surface);border-bottom:2px solid var(--gold);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:10px}
+.logo{width:34px;height:34px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#111;font-size:17px;flex-shrink:0}
+.brand{font-size:13px;font-weight:800;color:var(--gold);letter-spacing:1.4px;text-transform:uppercase;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layout{display:flex}
+.side{width:190px;background:var(--surface);border-right:1px solid var(--border);padding:18px 0;flex-shrink:0;min-height:calc(100vh - 58px)}
+.tab{padding:10px 20px;cursor:pointer;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-left:3px solid transparent}
+.tab.on{background:#1F1F1C;color:var(--gold);border-left-color:var(--gold)}
+.main{flex:1;padding:26px;min-width:0}
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto}
+.tabs .t{padding:12px 14px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;color:var(--muted);border-bottom:2px solid transparent}
+.tabs .t.on{color:var(--gold);border-bottom-color:var(--gold)}
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;padding:26px;position:relative}
+.x{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+.check{width:24px;height:24px;border-radius:6px;flex-shrink:0;cursor:pointer;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.check.on{background:var(--green);border-color:var(--green)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;background:var(--surface)}
+td{padding:11px 12px;border-top:1px solid var(--border)}
+tr.click{cursor:pointer}tr.click:hover td{background:#22221E}
+.tablewrap{border:1px solid var(--border);border-radius:9px;overflow-x:auto}
+.banner{background:#2A1F0A;border:1px solid #4A3818;color:var(--gold2);border-radius:9px;padding:12px 16px;margin-bottom:18px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.empty{color:var(--dim);font-size:13px;padding:18px;text-align:center;border:1px dashed var(--border);border-radius:9px}
+.mobile-only{display:none}
+@media (max-width:760px){
+  .side{display:none}.mobile-only{display:flex}.main{padding:16px}.hide-m{display:none}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ============================================================================
+   CONFIG — edit these to launch
+   ========================================================================== */
+const CONFIG = {
+  productName: "CrewDay",
+  // Create a Stripe Payment Link for your Pro subscription (see LAUNCH.md),
+  // set its "after payment" redirect to  https://YOUR-DOMAIN/app?upgraded=1
+  // and paste the link here:
+  stripePaymentLink: "",
+  // Stripe customer portal link (lets customers cancel / update card):
+  stripeCustomerPortal: "",
+  proPrice: "$29/mo",
+  supportEmail: "",
+  freeLimits: { openJobs: 2, crew: 3 },
+};
+
+/* ========================================================================== */
+const { useState, useEffect, useMemo } = React;
+const html = htm.bind(React.createElement);
+const STORE_KEY = "crewday:v1";
+
+const STATUS = {
+  Lead:{bg:"#1A0A2A",fg:"#A88CE8"}, "Estimate Sent":{bg:"#0A1525",fg:"#6AA8E0"},
+  Active:{bg:"#2A1F0A",fg:"#E8B84B"}, Completed:{bg:"#0A1F12",fg:"#4CAF7A"},
+};
+const PRIORITIES = ["MUST FINISH TODAY","HIGH PRIORITY","NORMAL","WHEN TIME ALLOWS"];
+const PCOLOR = {"MUST FINISH TODAY":"var(--red)","HIGH PRIORITY":"var(--orange)","NORMAL":"var(--text)","WHEN TIME ALLOWS":"var(--dim)"};
+const PICON = {"MUST FINISH TODAY":"🔴","HIGH PRIORITY":"🟠","NORMAL":"⚪","WHEN TIME ALLOWS":"⚫"};
+const START_CHECKLIST = ["I reviewed today's full task list","All tools I need are on site","All materials for today are here","Missing items are flagged to the boss","Site / floor protection is in place"];
+const CLEANUP = ["All tools put away / locked up","Nothing left on homeowner's furniture","All trash and food removed","Work area swept","Doors and windows locked"];
+
+const todayStr = () => new Date().toLocaleDateString("en-CA");
+const nowTime = () => new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+const money = n => "$" + Math.round(Number(n)||0).toLocaleString();
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const hoursBetween = (a,b) => Math.max(0,(b-a)/36e5);
+
+function emptyState(){
+  return { version:1, company:null, plan:"free", jobs:[], crew:[], tasks:[], materials:[], tools:[], clock:[], reports:[], checklists:{} };
+}
+
+function sampleData(company){
+  const c = [
+    {id:uid(),name:"Mike C.",role:"Lead Carpenter",phone:"",active:true},
+    {id:uid(),name:"Justin R.",role:"Carpenter",phone:"",active:true},
+    {id:uid(),name:"Dave P.",role:"Laborer",phone:"",active:true},
+  ];
+  const j = [
+    {id:uid(),client:"Brennan Residence",address:"123 Main St",type:"Kitchen Remodel",status:"Active",estimate:48500,billed:24250,notes:"Cabinets ordered. Tile sub next week."},
+    {id:uid(),client:"Piazza Residence",address:"45 Ocean Ave",type:"Deck & Siding",status:"Estimate Sent",estimate:31200,billed:0,notes:"Awaiting signed contract."},
+  ];
+  const t = todayStr();
+  return {
+    ...emptyState(), company, crew:c, jobs:j,
+    tasks:[
+      {id:uid(),jobId:j[0].id,crewId:c[0].id,text:"Frame out pantry wall",priority:"MUST FINISH TODAY",done:false,carriedOver:false,date:t},
+      {id:uid(),jobId:j[0].id,crewId:c[0].id,text:"Install upper cabinet boxes — left wall",priority:"HIGH PRIORITY",done:false,carriedOver:false,date:t},
+      {id:uid(),jobId:j[0].id,crewId:c[1].id,text:"Hang drywall — closet wall",priority:"MUST FINISH TODAY",done:false,carriedOver:true,date:t},
+      {id:uid(),jobId:j[0].id,crewId:c[2].id,text:"Sweep and stack scraps, 2nd floor",priority:"NORMAL",done:false,carriedOver:false,date:t},
+    ],
+    materials:[{id:uid(),jobId:j[0].id,crewId:c[1].id,item:'1/2" drywall',qty:"4 sheets",urgent:true,ordered:false,date:t}],
+    tools:[
+      {id:uid(),name:"Framing Nailer",tag:"T-001",crewId:c[0].id,condition:"Good"},
+      {id:uid(),name:"Miter Saw",tag:"T-002",crewId:c[0].id,condition:"Good"},
+      {id:uid(),name:"Finish Nailer",tag:"T-003",crewId:c[1].id,condition:"Needs new tip"},
+    ],
+  };
+}
+
+function load(){
+  try{ const raw = localStorage.getItem(STORE_KEY); if(raw) return {...emptyState(), ...JSON.parse(raw)}; }catch(e){}
+  return emptyState();
+}
+function save(s){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
+
+/* ---------- small UI ---------- */
+const Badge = ({status}) => { const s=STATUS[status]||{bg:"#222",fg:"#aaa"}; return html`<span class="pill" style=${{background:s.bg,color:s.fg}}>● ${status}</span>`; };
+const PTag = ({p}) => html`<span style=${{color:PCOLOR[p],fontSize:11,fontWeight:700}}>${PICON[p]} ${p}</span>`;
+function Modal({title,onClose,children}){
+  return html`<div class="modalbg" onClick=${onClose}><div class="modal" onClick=${e=>e.stopPropagation()}>
+    <button class="x" onClick=${onClose} aria-label="Close">✕</button>
+    ${title && html`<div class="h2" style=${{marginBottom:10,paddingRight:30}}>${title}</div>`}
+    ${children}</div></div>`;
+}
+function Field({label,children}){ return html`<div><label>${label}</label>${children}</div>`; }
+
+/* ---------- forms ---------- */
+function JobForm({job,onSave,onDelete,onClose}){
+  const [f,setF] = useState(job || {client:"",address:"",type:"",status:"Active",estimate:"",billed:"",notes:""});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  return html`<${Modal} title=${job?"Edit Job":"New Job"} onClose=${onClose}>
+    <${Field} label="Client"><input value=${f.client} onInput=${set("client")} placeholder="e.g. Smith Residence"/><//>
+    <${Field} label="Address"><input value=${f.address} onInput=${set("address")}/><//>
+    <${Field} label="Job type"><input value=${f.type} onInput=${set("type")} placeholder="Kitchen remodel, roof, deck…"/><//>
+    <${Field} label="Status"><select value=${f.status} onChange=${set("status")}>${Object.keys(STATUS).map(s=>html`<option>${s}</option>`)}</select><//>
+    <div class="row"><div style=${{flex:1}}><${Field} label="Contract / estimate $"><input type="number" inputmode="decimal" value=${f.estimate} onInput=${set("estimate")}/><//></div>
+    <div style=${{flex:1}}><${Field} label="Billed so far $"><input type="number" inputmode="decimal" value=${f.billed} onInput=${set("billed")}/><//></div></div>
+    <${Field} label="Notes"><textarea rows="3" value=${f.notes} onInput=${set("notes")}></textarea><//>
+    <div class="row between" style=${{marginTop:20}}>
+      ${onDelete ? html`<button class="btn danger" onClick=${onDelete}>Delete</button>` : html`<span/>`}
+      <button class="btn" disabled=${!f.client.trim()} onClick=${()=>onSave({...f,estimate:+f.estimate||0,billed:+f.billed||0})}>Save Job</button>
+    </div><//>`;
+}
+function CrewForm({person,onSave,onDelete,onClose}){
+  const [f,setF] = useState(person || {name:"",role:"",phone:"",active:true});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  return html`<${Modal} title=${person?"Edit Crew Member":"Add Crew Member"} onClose=${onClose}>
+    <${Field} label="Name"><input value=${f.name} onInput=${set("name")}/><//>
+    <${Field} label="Role"><input value=${f.role} onInput=${set("role")} placeholder="Carpenter, laborer, foreman…"/><//>
+    <${Field} label="Phone"><input type="tel" value=${f.phone} onInput=${set("phone")}/><//>
+    <div class="row between" style=${{marginTop:20}}>
+      ${onDelete ? html`<button class="btn danger" onClick=${onDelete}>Remove</button>` : html`<span/>`}
+      <button class="btn" disabled=${!f.name.trim()} onClick=${()=>onSave(f)}>Save</button>
+    </div><//>`;
+}
+function TaskForm({task,jobs,crew,onSave,onDelete,onClose}){
+  const [f,setF] = useState(task || {text:"",jobId:jobs[0]?.id||"",crewId:crew[0]?.id||"",priority:"NORMAL"});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  return html`<${Modal} title=${task?"Edit Task":"Assign Task"} onClose=${onClose}>
+    <${Field} label="Task"><input value=${f.text} onInput=${set("text")} placeholder="What needs to get done?"/><//>
+    <${Field} label="Job"><select value=${f.jobId} onChange=${set("jobId")}>${jobs.map(j=>html`<option value=${j.id}>${j.client}</option>`)}</select><//>
+    <${Field} label="Assign to"><select value=${f.crewId} onChange=${set("crewId")}>${crew.map(c=>html`<option value=${c.id}>${c.name}</option>`)}</select><//>
+    <${Field} label="Priority"><select value=${f.priority} onChange=${set("priority")}>${PRIORITIES.map(p=>html`<option>${p}</option>`)}</select><//>
+    <div class="row between" style=${{marginTop:20}}>
+      ${onDelete ? html`<button class="btn danger" onClick=${onDelete}>Delete</button>` : html`<span/>`}
+      <button class="btn" disabled=${!f.text.trim()||!f.jobId||!f.crewId} onClick=${()=>onSave(f)}>Save Task</button>
+    </div><//>`;
+}
+function ToolForm({tool,crew,onSave,onDelete,onClose}){
+  const [f,setF] = useState(tool || {name:"",tag:"",crewId:"",condition:"Good"});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  return html`<${Modal} title=${tool?"Edit Tool":"Add Tool"} onClose=${onClose}>
+    <${Field} label="Tool"><input value=${f.name} onInput=${set("name")}/><//>
+    <${Field} label="Tag / ID"><input value=${f.tag} onInput=${set("tag")}/><//>
+    <${Field} label="Checked out to"><select value=${f.crewId} onChange=${set("crewId")}><option value="">— In shop —</option>${crew.map(c=>html`<option value=${c.id}>${c.name}</option>`)}</select><//>
+    <${Field} label="Condition"><input value=${f.condition} onInput=${set("condition")}/><//>
+    <div class="row between" style=${{marginTop:20}}>
+      ${onDelete ? html`<button class="btn danger" onClick=${onDelete}>Delete</button>` : html`<span/>`}
+      <button class="btn" disabled=${!f.name.trim()} onClick=${()=>onSave(f)}>Save</button>
+    </div><//>`;
+}
+function MaterialForm({jobs,defaultJobId,onSave,onClose}){
+  const [f,setF] = useState({item:"",qty:"",jobId:defaultJobId||jobs[0]?.id||"",urgent:false});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  return html`<${Modal} title="Request Material" onClose=${onClose}>
+    <${Field} label="What do you need?"><input value=${f.item} onInput=${set("item")} placeholder='e.g. 2x4x8 studs'/><//>
+    <${Field} label="How many?"><input value=${f.qty} onInput=${set("qty")} placeholder="e.g. 20"/><//>
+    <${Field} label="Job"><select value=${f.jobId} onChange=${set("jobId")}>${jobs.map(j=>html`<option value=${j.id}>${j.client}</option>`)}</select><//>
+    <label class="row" style=${{textTransform:"none",fontSize:14,color:"var(--text)",cursor:"pointer",marginTop:16}}>
+      <input type="checkbox" style=${{width:20,height:20}} checked=${f.urgent} onChange=${e=>setF({...f,urgent:e.target.checked})}/> Urgent — I'm stuck without it
+    </label>
+    <button class="btn big" style=${{marginTop:20}} disabled=${!f.item.trim()||!f.jobId} onClick=${()=>onSave(f)}>Send Request</button><//>`;
+}
+
+/* ---------- upgrade ---------- */
+function UpgradeModal({reason,company,onClose}){
+  const link = CONFIG.stripePaymentLink;
+  const href = link ? link + (link.includes("?")?"&":"?") + "client_reference_id=" + encodeURIComponent((company?.name||"company").replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,200)) : "";
+  return html`<${Modal} title=${"Upgrade to " + CONFIG.productName + " Pro"} onClose=${onClose}>
+    ${reason && html`<p class="muted" style=${{marginBottom:14}}>${reason}</p>`}
+    <div class="card" style=${{background:"var(--surface)"}}>
+      <div class="stat" style=${{color:"var(--gold)"}}>${CONFIG.proPrice}</div>
+      <div class="muted small" style=${{marginBottom:12}}>One flat price for your whole company. No per-user fees.</div>
+      ${["Unlimited jobs","Unlimited crew members","Daily wrap-up reports & timesheets","Timesheet CSV export for payroll","Priority email support"].map(x=>html`<div style=${{padding:"4px 0"}}>✓ ${x}</div>`)}
+    </div>
+    ${link
+      ? html`<a class="btn big" style=${{display:"block",textAlign:"center",textDecoration:"none",marginTop:18}} href=${href}>Upgrade Now →</a>`
+      : html`<div class="banner" style=${{marginTop:18}}>Payments aren't set up yet. The owner needs to add a Stripe Payment Link in CONFIG (see LAUNCH.md).</div>`}
+  <//>`;
+}
+
+/* ---------- onboarding ---------- */
+function Onboarding({onDone}){
+  const [f,setF] = useState({name:"",owner:"",trade:"General Contractor"});
+  const set = k => e => setF({...f,[k]:e.target.value});
+  const ok = f.name.trim() && f.owner.trim();
+  return html`<div style=${{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+    <div class="card" style=${{width:440,maxWidth:"100%",padding:28}}>
+      <div class="row" style=${{marginBottom:18}}><div class="logo">${CONFIG.productName[0]}</div><div class="brand">${CONFIG.productName}</div></div>
+      <div class="h2">Set up your company</div>
+      <div class="sub">Takes 30 seconds. Free for up to ${CONFIG.freeLimits.crew} crew members.</div>
+      <${Field} label="Company name"><input value=${f.name} onInput=${set("name")} placeholder="e.g. Smith Builders"/><//>
+      <${Field} label="Your first name"><input value=${f.owner} onInput=${set("owner")}/><//>
+      <${Field} label="Trade"><select value=${f.trade} onChange=${set("trade")}>
+        ${["General Contractor","Remodeling","Roofing","Painting","Landscaping","Electrical","Plumbing","HVAC","Other"].map(t=>html`<option>${t}</option>`)}</select><//>
+      <button class="btn big" style=${{marginTop:22}} disabled=${!ok} onClick=${()=>onDone(f,false)}>Start with a blank slate</button>
+      <button class="btn ghost big" style=${{marginTop:10}} disabled=${!ok} onClick=${()=>onDone(f,true)}>Start with sample data to explore</button>
+    </div></div>`;
+}
+
+/* ---------- BOSS VIEW ---------- */
+function BossView({s,update,openUpgrade,goCrew}){
+  const [tab,setTab] = useState("dashboard");
+  const [modal,setModal] = useState(null);
+  const today = todayStr();
+  const isPro = s.plan === "pro";
+  const openJobs = s.jobs.filter(j=>j.status!=="Completed");
+  const activeCrew = s.crew.filter(c=>c.active);
+  const todayClock = s.clock.filter(c=>c.date===today);
+  const onSite = todayClock.filter(c=>!c.out);
+  const pendingMats = s.materials.filter(m=>!m.ordered);
+  const todayReports = s.reports.filter(r=>r.date===today);
+  const crewName = id => s.crew.find(c=>c.id===id)?.name || "—";
+  const jobName = id => s.jobs.find(j=>j.id===id)?.client || "—";
+
+  const canAddJob = isPro || openJobs.length < CONFIG.freeLimits.openJobs;
+  const canAddCrew = isPro || activeCrew.length < CONFIG.freeLimits.crew;
+
+  const upsert = (key,item) => update(st => ({...st,[key]: item.id ? st[key].map(x=>x.id===item.id?item:x) : [...st[key],{...item,id:uid()}]}));
+  const remove = (key,id) => update(st => ({...st,[key]: st[key].filter(x=>x.id!==id)}));
+
+  const saveJob = job => {
+    if(!job.id && !isPro && job.status!=="Completed" && openJobs.length >= CONFIG.freeLimits.openJobs){ setModal(null); return openUpgrade(`The free plan includes ${CONFIG.freeLimits.openJobs} open jobs.`); }
+    upsert("jobs",job); setModal(null);
+  };
+
+  const exportTimesheet = () => {
+    if(!isPro) return openUpgrade("Timesheet export is a Pro feature.");
+    const rows = [["Date","Crew member","Job","Clock in","Clock out","Hours"]];
+    [...s.clock].sort((a,b)=>a.inTs-b.inTs).forEach(c=>rows.push([c.date,crewName(c.crewId),jobName(c.jobId),c.inLabel,c.outLabel||"",c.outTs?hoursBetween(c.inTs,c.outTs).toFixed(2):""]));
+    const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download = `timesheet-${today}.csv`; a.click();
+  };
+
+  const TABS = {dashboard:"📊 Dashboard",jobs:"🏗 Jobs",tasks:"✅ Tasks",crew:"👷 Crew",materials:"📦 Materials",tools:"🔧 Tools",time:"⏱ Timesheets",settings:"⚙️ Settings"};
+  const greet = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
+
+  const Stat = ({label,value,sub,color}) => html`<div class="card"><div class="label">${label}</div><div class="stat" style=${{color}}>${value}</div><div class="dim small">${sub}</div></div>`;
+
+  return html`<div>
+    <div class="topbar">
+      <div class="row" style=${{minWidth:0}}><div class="logo">${(s.company.name[0]||"C").toUpperCase()}</div>
+        <div style=${{minWidth:0}}><div class="brand">${s.company.name}</div><div class="dim" style=${{fontSize:10,letterSpacing:1}}>BOSS VIEW ${isPro?"· PRO":""}</div></div></div>
+      <div class="row">
+        ${!isPro && html`<button class="btn sm hide-m" onClick=${()=>openUpgrade()}>Upgrade</button>`}
+        <button class="btn ghost sm" onClick=${goCrew}>Crew View →</button>
+      </div>
+    </div>
+    <div class="tabs mobile-only">${Object.entries(TABS).map(([k,v])=>html`<div class=${"t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${v}</div>`)}</div>
+    <div class="layout">
+      <nav class="side">
+        ${Object.entries(TABS).map(([k,v])=>html`<div class=${"tab"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${v}</div>`)}
+        <div class="card" style=${{margin:"22px 12px 0",padding:14}}>
+          <div class="label">On site now</div><div class="stat" style=${{color:"var(--gold)"}}>${onSite.length}</div><div class="dim small">of ${activeCrew.length} crew</div>
+        </div>
+        ${!isPro && html`<div class="card" style=${{margin:"10px 12px 0",padding:14}}>
+          <div class="label">Free plan</div>
+          <div class="small muted" style=${{margin:"6px 0 10px"}}>${openJobs.length}/${CONFIG.freeLimits.openJobs} open jobs · ${activeCrew.length}/${CONFIG.freeLimits.crew} crew</div>
+          <button class="btn sm" style=${{width:"100%"}} onClick=${()=>openUpgrade()}>Go unlimited</button></div>`}
+      </nav>
+      <main class="main">
+
+      ${tab==="dashboard" && html`<div>
+        <div class="h2">${greet}, ${s.company.owner}</div>
+        <div class="sub">${new Date().toLocaleDateString([], {weekday:"long",month:"long",day:"numeric"})} — your day at a glance</div>
+        ${s.jobs.length===0 && html`<div class="banner"><span>👋 Start by adding your first job and your crew. Then hand your crew the phone link to this app.</span>
+          <button class="btn sm" onClick=${()=>setTab("jobs")}>Add a job</button></div>`}
+        <div class="grid g4">
+          <${Stat} label="Active jobs" value=${s.jobs.filter(j=>j.status==="Active").length} sub="in progress" color="var(--gold)"/>
+          <${Stat} label="On site now" value=${onSite.length} sub="clocked in" color="var(--green)"/>
+          <${Stat} label="Material requests" value=${pendingMats.length} sub="need pickup" color=${pendingMats.some(m=>m.urgent)?"var(--red)":"var(--text)"}/>
+          <${Stat} label="Unbilled" value=${money(s.jobs.filter(j=>j.status==="Active").reduce((a,j)=>a+(j.estimate-j.billed),0))} sub="on active jobs" color="var(--text)"/>
+        </div>
+
+        <div class="sec">Who's on site today</div>
+        ${activeCrew.length===0 ? html`<div class="empty">No crew yet. <a style=${{color:"var(--gold)",cursor:"pointer"}} onClick=${()=>setTab("crew")}>Add crew →</a></div>` :
+        html`<div class="grid g2">${activeCrew.map(c=>{
+          const ci = todayClock.filter(x=>x.crewId===c.id).slice(-1)[0];
+          const open = s.tasks.filter(t=>t.crewId===c.id && !t.done).length;
+          const rep = todayReports.find(r=>r.crewId===c.id);
+          return html`<div class="card" key=${c.id}>
+            <div class="row between"><b>${c.name}</b><span class="dim small">${c.role}</span></div>
+            ${ci ? html`<div class="small" style=${{color:ci.out?"var(--muted)":"var(--green)",marginTop:6}}>${ci.out?"Clocked out "+ci.outLabel:"✓ In at "+ci.inLabel} — ${jobName(ci.jobId)}</div>`
+                 : html`<div class="small" style=${{color:"var(--red)",marginTop:6}}>✗ Not clocked in</div>`}
+            <div class="dim small" style=${{marginTop:4}}>${open} open task${open===1?"":"s"} ${rep?"· ✅ wrap-up submitted":""}</div></div>`;})}</div>`}
+
+        ${pendingMats.length>0 && html`<div><div class="sec">Material pickup list</div>
+          <div class="card list">${pendingMats.map(m=>html`<div class="row between wrap" key=${m.id}>
+            <div><b>${m.item}</b> <span class="muted">${m.qty}</span> ${m.urgent&&html`<span class="pill" style=${{background:"#3A0A0A",color:"var(--red)"}}>URGENT</span>`}
+              <div class="dim small">${crewName(m.crewId)} — ${jobName(m.jobId)}</div></div>
+            <button class="btn ok sm" onClick=${()=>update(st=>({...st,materials:st.materials.map(x=>x.id===m.id?{...x,ordered:true}:x)}))}>Mark ordered</button></div>`)}</div></div>`}
+
+        ${todayReports.length>0 && html`<div><div class="sec">Today's wrap-up reports</div>
+          <div class="grid g2">${todayReports.map(r=>html`<div class="card" key=${r.id}>
+            <div class="row between"><b>${crewName(r.crewId)}</b><span class="dim small">${r.time}</span></div>
+            <div class="small" style=${{marginTop:8}}>✅ ${r.doneCount} done · ↪ ${r.leftCount} carried to tomorrow</div>
+            ${r.leftover && html`<div class="small muted" style=${{marginTop:6}}><b>Left:</b> ${r.leftover}</div>`}
+            ${r.needs && html`<div class="small muted" style=${{marginTop:4}}><b>Needs tomorrow:</b> ${r.needs}</div>`}
+            <div class="small" style=${{marginTop:6,color:r.cleanAll?"var(--green)":"var(--orange)"}}>${r.cleanAll?"✓ Site cleanup confirmed":"⚠ Cleanup checklist incomplete"}</div>
+          </div>`)}</div></div>`}
+      </div>`}
+
+      ${tab==="jobs" && html`<div>
+        <div class="row between wrap" style=${{marginBottom:18}}><div class="h2">Jobs</div>
+          <button class="btn" onClick=${()=>canAddJob?setModal({type:"job"}):openUpgrade(`The free plan includes ${CONFIG.freeLimits.openJobs} open jobs.`)}>+ New Job</button></div>
+        ${s.jobs.length===0 ? html`<div class="empty">No jobs yet.</div>` : html`<div class="tablewrap"><table>
+          <thead><tr><th>Client</th><th class="hide-m">Type</th><th>Status</th><th>Contract</th><th class="hide-m">Billed</th><th class="hide-m">Balance</th></tr></thead>
+          <tbody>${s.jobs.map(j=>html`<tr class="click" key=${j.id} onClick=${()=>setModal({type:"job",item:j})}>
+            <td><b>${j.client}</b><div class="dim small">${j.address}</div></td><td class="hide-m muted">${j.type}</td><td><${Badge} status=${j.status}/></td>
+            <td style=${{color:"var(--gold)"}}>${money(j.estimate)}</td><td class="hide-m muted">${money(j.billed)}</td><td class="hide-m">${money(j.estimate-j.billed)}</td></tr>`)}</tbody></table></div>`}
+      </div>`}
+
+      ${tab==="tasks" && html`<div>
+        <div class="row between wrap" style=${{marginBottom:18}}><div class="h2">Tasks</div>
+          <button class="btn" disabled=${!s.jobs.length||!s.crew.length} onClick=${()=>setModal({type:"task"})}>+ Assign Task</button></div>
+        ${(!s.jobs.length||!s.crew.length) && html`<div class="banner">Add at least one job and one crew member first.</div>`}
+        ${activeCrew.map(c=>{ const ts = s.tasks.filter(t=>t.crewId===c.id); if(!ts.length) return null;
+          return html`<div key=${c.id}><div class="sec">${c.name}</div><div class="card list">${ts.sort((a,b)=>PRIORITIES.indexOf(a.priority)-PRIORITIES.indexOf(b.priority)).map(t=>html`<div class="row between" key=${t.id} style=${{opacity:t.done?.5:1,cursor:"pointer"}} onClick=${()=>setModal({type:"task",item:t})}>
+            <div><div style=${{textDecoration:t.done?"line-through":"none"}}>${t.text}</div><div class="small"><${PTag} p=${t.priority}/> <span class="dim">· ${jobName(t.jobId)}</span> ${t.carriedOver&&html`<span style=${{color:"var(--orange)"}}>· ↪ carried over</span>`}</div></div>
+            <span class="dim">${t.done?"✓":"›"}</span></div>`)}</div></div>`;})}
+        ${s.tasks.some(t=>t.done) && html`<button class="btn ghost sm" style=${{marginTop:16}} onClick=${()=>update(st=>({...st,tasks:st.tasks.filter(t=>!t.done)}))}>Clear completed tasks</button>`}
+      </div>`}
+
+      ${tab==="crew" && html`<div>
+        <div class="row between wrap" style=${{marginBottom:18}}><div class="h2">Crew</div>
+          <button class="btn" onClick=${()=>canAddCrew?setModal({type:"crew"}):openUpgrade(`The free plan includes ${CONFIG.freeLimits.crew} crew members.`)}>+ Add Crew</button></div>
+        ${s.crew.length===0 ? html`<div class="empty">No crew yet.</div>` : html`<div class="grid g2">${s.crew.map(c=>{ const ts=s.tasks.filter(t=>t.crewId===c.id);
+          return html`<div class="card" key=${c.id} style=${{cursor:"pointer"}} onClick=${()=>setModal({type:"crew",item:c})}>
+            <b>${c.name}</b><div class="muted small">${c.role}</div><div class="dim small">${c.phone}</div>
+            <div class="dim small" style=${{marginTop:6}}>${ts.filter(t=>t.done).length}/${ts.length} tasks done</div></div>`;})}</div>`}
+        <div class="card" style=${{marginTop:20}}><b>How your crew uses it</b><div class="muted small" style=${{marginTop:6}}>Open this app on a phone or a shared jobsite tablet → tap “Crew View” → each person taps their name to clock in, see their tasks, request materials, and submit the end-of-day wrap-up.</div></div>
+      </div>`}
+
+      ${tab==="materials" && html`<div>
+        <div class="h2" style=${{marginBottom:18}}>Material Requests</div>
+        ${s.materials.length===0 ? html`<div class="empty">No requests yet. Crew can request materials from the Crew View.</div>` :
+        html`<div class="card list">${[...s.materials].reverse().map(m=>html`<div class="row between wrap" key=${m.id} style=${{opacity:m.ordered?.45:1}}>
+          <div><b>${m.item}</b> <span class="muted">${m.qty}</span> ${m.urgent&&!m.ordered&&html`<span class="pill" style=${{background:"#3A0A0A",color:"var(--red)"}}>URGENT</span>`} ${m.ordered&&html`<span class="pill" style=${{background:"#0A2A18",color:"var(--green)"}}>ORDERED</span>`}
+            <div class="dim small">${crewName(m.crewId)} — ${jobName(m.jobId)} — ${m.date}</div></div>
+          ${m.ordered ? html`<button class="btn ghost sm" onClick=${()=>remove("materials",m.id)}>Remove</button>`
+            : html`<button class="btn ok sm" onClick=${()=>update(st=>({...st,materials:st.materials.map(x=>x.id===m.id?{...x,ordered:true}:x)}))}>Mark ordered</button>`}</div>`)}</div>`}
+      </div>`}
+
+      ${tab==="tools" && html`<div>
+        <div class="row between wrap" style=${{marginBottom:18}}><div class="h2">Tool Tracker</div><button class="btn" onClick=${()=>setModal({type:"tool"})}>+ Add Tool</button></div>
+        ${s.tools.length===0 ? html`<div class="empty">Track who has which tool so nothing walks off.</div>` : html`<div class="tablewrap"><table>
+          <thead><tr><th>Tool</th><th>Tag</th><th>Who has it</th><th>Condition</th></tr></thead>
+          <tbody>${s.tools.map(t=>html`<tr class="click" key=${t.id} onClick=${()=>setModal({type:"tool",item:t})}><td><b>${t.name}</b></td><td class="dim">${t.tag}</td>
+            <td>${t.crewId?crewName(t.crewId):html`<span class="dim">In shop</span>`}</td><td style=${{color:t.condition==="Good"?"var(--green)":"var(--orange)"}}>${t.condition}</td></tr>`)}</tbody></table></div>`}
+      </div>`}
+
+      ${tab==="time" && html`<div>
+        <div class="row between wrap" style=${{marginBottom:18}}><div class="h2">Timesheets</div><button class="btn" onClick=${exportTimesheet}>⬇ Export CSV ${isPro?"":"(Pro)"}</button></div>
+        ${s.clock.length===0 ? html`<div class="empty">Clock-ins from the Crew View show up here.</div>` : html`<div class="tablewrap"><table>
+          <thead><tr><th>Date</th><th>Crew</th><th class="hide-m">Job</th><th>In</th><th>Out</th><th>Hours</th></tr></thead>
+          <tbody>${[...s.clock].reverse().slice(0,200).map(c=>html`<tr key=${c.id}><td class="dim">${c.date}</td><td>${crewName(c.crewId)}</td><td class="hide-m muted">${jobName(c.jobId)}</td>
+            <td>${c.inLabel}</td><td>${c.outLabel||html`<span style=${{color:"var(--green)"}}>on site</span>`}</td><td>${c.outTs?hoursBetween(c.inTs,c.outTs).toFixed(1):"—"}</td></tr>`)}</tbody></table></div>`}
+      </div>`}
+
+      ${tab==="settings" && html`<${Settings} s=${s} update=${update} openUpgrade=${openUpgrade}/>`}
+      </main>
+    </div>
+
+    ${modal?.type==="job" && html`<${JobForm} job=${modal.item} onClose=${()=>setModal(null)} onSave=${saveJob}
+        onDelete=${modal.item && (()=>{ if(confirm("Delete this job and its tasks?")){ update(st=>({...st,jobs:st.jobs.filter(j=>j.id!==modal.item.id),tasks:st.tasks.filter(t=>t.jobId!==modal.item.id)})); setModal(null);} })}/>`}
+    ${modal?.type==="crew" && html`<${CrewForm} person=${modal.item} onClose=${()=>setModal(null)} onSave=${p=>{upsert("crew",p);setModal(null);}}
+        onDelete=${modal.item && (()=>{ if(confirm("Remove this crew member?")){ update(st=>({...st,crew:st.crew.filter(c=>c.id!==modal.item.id),tasks:st.tasks.filter(t=>t.crewId!==modal.item.id)})); setModal(null);} })}/>`}
+    ${modal?.type==="task" && html`<${TaskForm} task=${modal.item} jobs=${s.jobs} crew=${activeCrew} onClose=${()=>setModal(null)}
+        onSave=${t=>{upsert("tasks",{done:false,carriedOver:false,date:today,...t});setModal(null);}} onDelete=${modal.item && (()=>{remove("tasks",modal.item.id);setModal(null);})}/>`}
+    ${modal?.type==="tool" && html`<${ToolForm} tool=${modal.item} crew=${activeCrew} onClose=${()=>setModal(null)}
+        onSave=${t=>{upsert("tools",t);setModal(null);}} onDelete=${modal.item && (()=>{remove("tools",modal.item.id);setModal(null);})}/>`}
+  </div>`;
+}
+
+function Settings({s,update,openUpgrade}){
+  const [f,setF] = useState(s.company);
+  const isPro = s.plan==="pro";
+  const backup = () => { const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"})); a.download=`${CONFIG.productName.toLowerCase()}-backup-${todayStr()}.json`; a.click(); };
+  const restore = e => { const file=e.target.files[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); if(!d.company) throw 0; if(confirm("Replace all current data with this backup?")) update(()=>({...emptyState(),...d})); }catch(err){ alert("That file isn't a valid backup."); } }; r.readAsText(file); };
+  return html`<div style=${{maxWidth:560}}>
+    <div class="h2" style=${{marginBottom:18}}>Settings</div>
+    <div class="card"><b>Company</b>
+      <${Field} label="Company name"><input value=${f.name} onInput=${e=>setF({...f,name:e.target.value})}/><//>
+      <${Field} label="Your first name"><input value=${f.owner} onInput=${e=>setF({...f,owner:e.target.value})}/><//>
+      <button class="btn" style=${{marginTop:14}} disabled=${!f.name.trim()} onClick=${()=>update(st=>({...st,company:f}))}>Save</button></div>
+    <div class="card" style=${{marginTop:14}}><b>Plan</b>
+      <div class="muted small" style=${{margin:"6px 0 12px"}}>${isPro?"You're on Pro — unlimited jobs and crew. Thank you!":`Free plan: ${CONFIG.freeLimits.openJobs} open jobs, ${CONFIG.freeLimits.crew} crew members.`}</div>
+      ${isPro ? (CONFIG.stripeCustomerPortal && html`<a class="btn ghost" style=${{textDecoration:"none"}} href=${CONFIG.stripeCustomerPortal}>Manage billing</a>`)
+              : html`<button class="btn" onClick=${()=>openUpgrade()}>Upgrade to Pro — ${CONFIG.proPrice}</button>`}</div>
+    <div class="card" style=${{marginTop:14}}><b>Your data</b>
+      <div class="muted small" style=${{margin:"6px 0 12px"}}>Data is saved on this device. Download a backup regularly, or to move to a new device.</div>
+      <div class="row wrap"><button class="btn ghost" onClick=${backup}>⬇ Download backup</button>
+        <label class="btn ghost" style=${{margin:0,textTransform:"none",letterSpacing:0,fontSize:14,color:"var(--muted)"}}>⬆ Restore backup<input type="file" accept="application/json" style=${{display:"none"}} onChange=${restore}/></label></div>
+      <button class="btn danger sm" style=${{marginTop:16}} onClick=${()=>{ if(confirm("Erase ALL data on this device? This can't be undone.")) update(()=>emptyState()); }}>Erase all data</button></div>
+    ${CONFIG.supportEmail && html`<div class="muted small" style=${{marginTop:16}}>Questions? <a style=${{color:"var(--gold)"}} href=${"mailto:"+CONFIG.supportEmail}>${CONFIG.supportEmail}</a></div>`}
+  </div>`;
+}
+
+/* ---------- CREW VIEW ---------- */
+function CrewView({s,update,goBoss}){
+  const [meId,setMeId] = useState(null);
+  const [tab,setTab] = useState("tasks");
+  const [modal,setModal] = useState(null);
+  const today = todayStr();
+  const me = s.crew.find(c=>c.id===meId);
+  const activeCrew = s.crew.filter(c=>c.active);
+
+  if(!me) return html`<div style=${{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}}>
+    <div class="logo" style=${{width:46,height:46,fontSize:22,marginBottom:14}}>${(s.company.name[0]||"C").toUpperCase()}</div>
+    <div class="brand" style=${{maxWidth:"90vw",fontSize:16}}>${s.company.name}</div>
+    <div class="muted" style=${{margin:"6px 0 26px"}}>Who are you?</div>
+    <div style=${{width:"100%",maxWidth:380,display:"flex",flexDirection:"column",gap:10}}>
+      ${activeCrew.length===0 && html`<div class="empty">No crew set up yet. The boss adds crew in Boss View → Crew.</div>`}
+      ${activeCrew.map(c=>html`<div class="card row between" key=${c.id} style=${{cursor:"pointer",padding:"16px 18px"}} onClick=${()=>{setMeId(c.id);setTab("tasks");}}>
+        <div><b>${c.name}</b><div class="muted small">${c.role}</div></div><span style=${{color:"var(--gold)",fontSize:20}}>›</span></div>`)}
+    </div>
+    <button class="btn ghost sm" style=${{marginTop:26}} onClick=${goBoss}>← Boss View</button></div>`;
+
+  const myTasks = s.tasks.filter(t=>t.crewId===me.id);
+  const myJob = s.jobs.find(j=>j.id===myTasks.find(t=>!t.done)?.jobId) || s.jobs.find(j=>j.id===myTasks[0]?.jobId) || s.jobs.find(j=>j.status==="Active");
+  const myClock = s.clock.filter(c=>c.crewId===me.id && c.date===today).slice(-1)[0];
+  const onSite = myClock && !myClock.out;
+  const myReport = s.reports.find(r=>r.crewId===me.id && r.date===today);
+  const checkKey = me.id+":"+today;
+  const checks = s.checklists[checkKey] || {};
+
+  const clockIn = () => update(st=>({...st,clock:[...st.clock,{id:uid(),crewId:me.id,jobId:myJob?.id||"",date:today,inTs:Date.now(),inLabel:nowTime(),out:false}]}));
+  const toggleTask = id => update(st=>({...st,tasks:st.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}));
+  const toggleCheck = i => update(st=>({...st,checklists:{...st.checklists,[checkKey]:{...checks,[i]:!checks[i]}}}));
+
+  const TABS = {tasks:"✅ Tasks",start:"☀️ Start",materials:"📦 Materials",tools:"🔧 Tools",wrapup:"🔒 Wrap-Up"};
+  return html`<div style=${{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:"var(--bg)"}}>
+    <div class="topbar"><div class="row" style=${{minWidth:0}}><div class="logo">${(s.company.name[0]||"C").toUpperCase()}</div>
+      <div style=${{minWidth:0}}><div class="brand">${s.company.name}</div><div class="dim" style=${{fontSize:11}}>${me.name}</div></div></div>
+      <div class="row">${onSite && html`<span style=${{fontSize:10,color:"var(--green)",fontWeight:700}}>● ON SITE</span>`}
+        <button class="btn ghost sm" onClick=${()=>setMeId(null)}>Switch</button></div></div>
+    <div class="row between" style=${{background:"#0A1A10",borderBottom:"1px solid #1A3A20",padding:"12px 16px"}}>
+      <div style=${{minWidth:0}}>
+        <div class="small" style=${{color:onSite?"var(--green)":"var(--muted)"}}>${myClock ? (myClock.out?"Clocked out at "+myClock.outLabel:"✓ Clocked in at "+myClock.inLabel) : "You're not clocked in yet"}</div>
+        <div class="dim small">${myJob ? myJob.client+" — "+myJob.address : "No job assigned"}</div></div>
+      ${!myClock || myClock.out ? html`<button class="btn ok" onClick=${clockIn}>CLOCK IN</button>`
+        : html`<button class="btn danger" onClick=${()=>setTab("wrapup")}>CLOCK OUT</button>`}
+    </div>
+    <div class="tabs">${Object.entries(TABS).map(([k,v])=>html`<div class=${"t"+(tab===k?" on":"")} onClick=${()=>setTab(k)}>${v}</div>`)}</div>
+    <div style=${{padding:16}}>
+      ${tab==="tasks" && html`<div>
+        ${myTasks.length===0 && html`<div class="empty">No tasks assigned yet. Check with the boss.</div>`}
+        ${PRIORITIES.map(p=>{ const ts=myTasks.filter(t=>t.priority===p); if(!ts.length) return null;
+          return html`<div key=${p} style=${{marginBottom:18}}><div style=${{marginBottom:8}}><${PTag} p=${p}/></div>
+            ${ts.map(t=>html`<div class="card row" key=${t.id} style=${{padding:"13px 14px",marginBottom:8,opacity:t.done?.5:1,cursor:"pointer"}} onClick=${()=>toggleTask(t.id)}>
+              <div class=${"check"+(t.done?" on":"")}>${t.done?"✓":""}</div>
+              <div style=${{flex:1}}><div style=${{textDecoration:t.done?"line-through":"none"}}>${t.text}</div>
+                ${t.carriedOver && html`<div class="small" style=${{color:"var(--orange)"}}>↪ Carried over</div>`}</div></div>`)}</div>`;})}
+      </div>`}
+
+      ${tab==="start" && html`<div class="card"><b style=${{color:"var(--gold)"}}>Start-of-day checklist</b>
+        <div class="small" style=${{color:"var(--orange)",background:"#1A0A00",padding:10,borderRadius:7,margin:"10px 0"}}>Walk through today's work in your head, step by step. What tools and materials will you need? Flag anything missing now — not at 2pm.</div>
+        ${START_CHECKLIST.map((item,i)=>html`<div class="row" key=${i} style=${{padding:"10px 0",cursor:"pointer"}} onClick=${()=>toggleCheck(i)}>
+          <div class=${"check"+(checks[i]?" on":"")}>${checks[i]?"✓":""}</div><div>${item}</div></div>`)}
+        <button class="btn ghost" style=${{marginTop:10,width:"100%"}} onClick=${()=>setModal("mat")}>Something missing? Request material →</button></div>`}
+
+      ${tab==="materials" && html`<div>
+        <button class="btn big" onClick=${()=>setModal("mat")} disabled=${!s.jobs.length}>+ Request Material</button>
+        <div class="sec">My requests</div>
+        ${s.materials.filter(m=>m.crewId===me.id).length===0 ? html`<div class="empty">Nothing requested.</div>` :
+          html`<div class="card list">${s.materials.filter(m=>m.crewId===me.id).reverse().map(m=>html`<div class="row between" key=${m.id}>
+            <div><b>${m.item}</b> <span class="muted">${m.qty}</span><div class="dim small">${m.date}</div></div>
+            <span class="pill" style=${{background:m.ordered?"#0A2A18":"#2A1F0A",color:m.ordered?"var(--green)":"var(--gold2)"}}>${m.ordered?"ORDERED":"PENDING"}</span></div>`)}</div>`}
+      </div>`}
+
+      ${tab==="tools" && html`<div>
+        <div class="sec" style=${{marginTop:0}}>Tools checked out to you</div>
+        ${s.tools.filter(t=>t.crewId===me.id).length===0 ? html`<div class="empty">No tools checked out to you.</div>` :
+          html`<div class="card list">${s.tools.filter(t=>t.crewId===me.id).map(t=>html`<div class="row between" key=${t.id}>
+            <div><b>${t.name}</b><div class="dim small">${t.tag} · ${t.condition}</div></div>
+            <button class="btn ghost sm" onClick=${()=>update(st=>({...st,tools:st.tools.map(x=>x.id===t.id?{...x,crewId:""}:x)}))}>Return</button></div>`)}</div>`}
+        ${s.tools.some(t=>!t.crewId) && html`<div><div class="sec">Available in shop</div><div class="card list">${s.tools.filter(t=>!t.crewId).map(t=>html`<div class="row between" key=${t.id}>
+          <div><b>${t.name}</b><div class="dim small">${t.tag}</div></div>
+          <button class="btn ok sm" onClick=${()=>update(st=>({...st,tools:st.tools.map(x=>x.id===t.id?{...x,crewId:me.id}:x)}))}>Take it</button></div>`)}</div></div>`}
+      </div>`}
+
+      ${tab==="wrapup" && html`<${WrapUp} me=${me} myTasks=${myTasks} myClock=${myClock} existing=${myReport} update=${update} toggleTask=${toggleTask} done=${()=>setTab("tasks")}/>`}
+    </div>
+    ${modal==="mat" && html`<${MaterialForm} jobs=${s.jobs} defaultJobId=${myJob?.id} onClose=${()=>setModal(null)}
+      onSave=${m=>{update(st=>({...st,materials:[...st.materials,{...m,id:uid(),crewId:me.id,ordered:false,date:today}]}));setModal(null);setTab("materials");}}/>`}
+  </div>`;
+}
+
+function WrapUp({me,myTasks,myClock,existing,update,toggleTask,done}){
+  const [leftover,setLeftover] = useState("");
+  const [needs,setNeeds] = useState("");
+  const [clean,setClean] = useState({});
+  if(existing) return html`<div class="card" style=${{textAlign:"center",padding:30}}>
+    <div style=${{fontSize:40}}>✅</div><div class="h2" style=${{marginTop:8}}>Wrap-up submitted</div>
+    <div class="muted">Submitted at ${existing.time}. Nice work today.</div></div>`;
+  const cleanAll = CLEANUP.every((_,i)=>clean[i]);
+  const submit = () => {
+    const now = Date.now(); const today = todayStr();
+    update(st=>({...st,
+      tasks: st.tasks.map(t=>t.crewId===me.id ? (t.done ? t : {...t,carriedOver:true}) : t),
+      clock: st.clock.map(c=>c.id===myClock?.id && !c.out ? {...c,out:true,outTs:now,outLabel:nowTime()} : c),
+      reports: [...st.reports,{id:uid(),crewId:me.id,date:today,time:nowTime(),doneCount:myTasks.filter(t=>t.done).length,leftCount:myTasks.filter(t=>!t.done).length,leftover,needs,cleanAll}],
+    }));
+  };
+  return html`<div>
+    <div class="card"><b style=${{color:"var(--gold)"}}>1. What got done?</b><div class="dim small" style=${{margin:"4px 0 8px"}}>Tap anything you finished.</div>
+      ${myTasks.length===0 && html`<div class="dim small">No tasks today.</div>`}
+      ${myTasks.map(t=>html`<div class="row" key=${t.id} style=${{padding:"8px 0",cursor:"pointer"}} onClick=${()=>toggleTask(t.id)}><div class=${"check"+(t.done?" on":"")}>${t.done?"✓":""}</div><div>${t.text}</div></div>`)}</div>
+    <div class="card" style=${{marginTop:12}}><b style=${{color:"var(--gold)"}}>2. What's left & what do you need tomorrow?</b>
+      <label>What's left / problems</label><textarea rows="2" value=${leftover} onInput=${e=>setLeftover(e.target.value)} placeholder="e.g. Drywall on back wall half done"></textarea>
+      <label>Materials or tools needed tomorrow</label><textarea rows="2" value=${needs} onInput=${e=>setNeeds(e.target.value)}></textarea></div>
+    <div class="card" style=${{marginTop:12}}><b style=${{color:"var(--gold)"}}>3. Site cleanup</b>
+      ${CLEANUP.map((item,i)=>html`<div class="row" key=${i} style=${{padding:"9px 0",cursor:"pointer"}} onClick=${()=>setClean({...clean,[i]:!clean[i]})}><div class=${"check"+(clean[i]?" on":"")}>${clean[i]?"✓":""}</div><div>${item}</div></div>`)}</div>
+    <button class="btn big" style=${{marginTop:16}} onClick=${submit}>${myClock && !myClock.out ? "Submit wrap-up & clock out" : "Submit wrap-up"}</button>
+    ${!cleanAll && html`<div class="small" style=${{color:"var(--orange)",textAlign:"center",marginTop:8}}>Cleanup checklist isn't complete — the boss will see that.</div>`}
+  </div>`;
+}
+
+/* ---------- ROOT ---------- */
+function App(){
+  const [s,setS] = useState(load);
+  const [view,setView] = useState(() => new URLSearchParams(location.search).get("view")==="crew" ? "crew" : "boss");
+  const [upgrade,setUpgrade] = useState(null);
+  const [toast,setToast] = useState("");
+  const update = fn => setS(prev => fn(prev));
+  useEffect(()=>save(s),[s]);
+
+  // Return from Stripe checkout
+  useEffect(()=>{
+    const p = new URLSearchParams(location.search);
+    if(p.get("upgraded")==="1"){
+      setS(prev=>({...prev,plan:"pro",proSince:prev.proSince||Date.now()}));
+      setToast("🎉 You're on Pro. Thanks for your support!");
+      p.delete("upgraded"); history.replaceState(null,"",location.pathname+(p.toString()?"?"+p:""));
+      setTimeout(()=>setToast(""),5000);
+    }
+  },[]);
+
+  const openUpgrade = reason => setUpgrade({reason: typeof reason==="string"?reason:""});
+
+  if(!s.company) return html`<${Onboarding} onDone=${(company,sample)=>setS(prev=>sample?{...sampleData(company),plan:prev.plan}:{...emptyState(),plan:prev.plan,company})}/>`;
+  return html`<div>
+    ${view==="boss" ? html`<${BossView} s=${s} update=${update} openUpgrade=${openUpgrade} goCrew=${()=>setView("crew")}/>`
+                    : html`<${CrewView} s=${s} update=${update} goBoss=${()=>setView("boss")}/>`}
+    ${upgrade && html`<${UpgradeModal} reason=${upgrade.reason} company=${s.company} onClose=${()=>setUpgrade(null)}/>`}
+    ${toast && html`<div style=${{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:"var(--green)",color:"#062",fontWeight:700,padding:"12px 20px",borderRadius:9,zIndex:300}}>${toast}</div>`}
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+</script>
+</body>
+</html>
